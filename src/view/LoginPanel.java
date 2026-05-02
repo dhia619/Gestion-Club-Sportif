@@ -13,13 +13,18 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import util.UIConstants;
 
-public class LoginPanel extends JPanel {
+public class LoginPanel extends JPanel{
+
+    JTextField identifiantField;
+    JPasswordField motDePasseField;
+    JButton loginButton;
 
     public LoginPanel() {
         this.setLayout(new GridLayout(1, 2));
@@ -37,27 +42,11 @@ public class LoginPanel extends JPanel {
 
         leftChild.setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel(new BorderLayout());
-        JPanel bottomPanel = new JPanel(new BorderLayout());
         JPanel centerPanel = new JPanel();
 
-        topPanel.setOpaque(false);
-        bottomPanel.setOpaque(false);
         centerPanel.setOpaque(false);
 
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-
-        // Change paths according to your real image names
-        JLabel topLeftImage = new JLabel(new ImageIcon("src/resources/images/exercise.png"));
-        JLabel topRightImage = new JLabel(new ImageIcon("src/resources/images/lift.png"));
-        JLabel bottomLeftImage = new JLabel(new ImageIcon("src/resources/images/lotus.png"));
-        JLabel bottomRightImage = new JLabel(new ImageIcon("src/resources/images/running.png"));
-
-        topPanel.add(topLeftImage, BorderLayout.WEST);
-        topPanel.add(topRightImage, BorderLayout.EAST);
-
-        bottomPanel.add(bottomLeftImage, BorderLayout.WEST);
-        bottomPanel.add(bottomRightImage, BorderLayout.EAST);
 
         JLabel welcomeLabel = new JLabel("Bienvenue au");
         JLabel clubNameLabel = new JLabel("Club Sportif");
@@ -82,9 +71,7 @@ public class LoginPanel extends JPanel {
         centerPanel.add(Box.createVerticalStrut(10));
         centerPanel.add(sloganLabel);
 
-        leftChild.add(topPanel, BorderLayout.NORTH);
         leftChild.add(centerPanel, BorderLayout.CENTER);
-        leftChild.add(bottomPanel, BorderLayout.SOUTH);
 
         // ================= RIGHT CHILD =================
 
@@ -102,8 +89,8 @@ public class LoginPanel extends JPanel {
         identifiantLabel.setFont(new Font("Arial", Font.BOLD, 14));
         motDePasseLabel.setFont(new Font("Arial", Font.BOLD, 14));
 
-        JTextField identifiantField = new JTextField();
-        JPasswordField motDePasseField = new JPasswordField();
+        identifiantField = new JTextField();
+        motDePasseField = new JPasswordField();
 
         identifiantField.setFont(new Font("Arial", Font.BOLD, 17));
         motDePasseField.setFont(new Font("Arial", Font.BOLD, 17));
@@ -113,10 +100,11 @@ public class LoginPanel extends JPanel {
         identifiantField.setPreferredSize(inputSize);
         motDePasseField.setPreferredSize(inputSize);
 
-        JButton loginButton = new JButton("Se connecter");
+        loginButton = new JButton("Se connecter");
         loginButton.setFont(new Font("Arial", Font.BOLD, 18));
         loginButton.setFocusable(false);
         loginButton.setPreferredSize(new Dimension(300, 42));
+        //loginButton.addActionListener(this);
 
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         identifiantLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -141,5 +129,22 @@ public class LoginPanel extends JPanel {
         formPanel.add(loginButton);
 
         rightChild.add(formPanel);
+
+    }
+
+    public String getIdentifiant() {
+        return identifiantField.getText();
+    }
+
+    public String getMotDePasse() {
+        return new String(motDePasseField.getPassword());
+    }
+
+    public JButton getLoginButton() {
+        return loginButton;
+    }
+
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Erreur", JOptionPane.ERROR_MESSAGE);
     }
 }

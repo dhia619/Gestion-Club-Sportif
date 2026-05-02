@@ -1,7 +1,10 @@
+
+import dao.DatabaseInitializer;
 import view.MainFrame;
 
 public class Main {
     public static void main(String[] args){
-        MainFrame f = new MainFrame(800, 500 , "Club Sportif");
+        DatabaseInitializer.init();
+        new MainFrame(800, 500 , "Club Sportif");
     }
 }

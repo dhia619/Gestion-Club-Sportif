@@ -15,6 +15,7 @@ public class Utilisateur {
     private String role;
 
     public Utilisateur(
+        int id,
         String nom, 
         String prenom, 
         LocalDate dateNaissance, 
@@ -25,6 +26,7 @@ public class Utilisateur {
         String motDePasse,
         String role
     ) {
+        this.id = id;
         this.nom = nom;
         this.prenom = prenom;
         this.dateNaissance = dateNaissance;
@@ -34,6 +36,10 @@ public class Utilisateur {
         this.login = login;
         this.motDePasse = motDePasse;
         this.role = role;
+    }
+
+    public int getId(){
+        return this.id;
     }
 
     public String getNom(){
