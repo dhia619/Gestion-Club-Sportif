@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import controller.GestionActiviteController;
 import controller.GestionMembreController;
 import model.Utilisateur;
 import util.UIConstants;
@@ -114,6 +115,8 @@ public class AdminDashboardPanel extends JPanel {
 
     private JPanel gestionActivitesPage() {
         JPanel panel = createBasePage("Gestion des activités");
+        GestionActiviteController controller = new GestionActiviteController();
+        panel.add(controller.getView());
 
         return panel;
     }

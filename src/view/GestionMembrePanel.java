@@ -114,9 +114,13 @@ public class GestionMembrePanel extends JPanel {
 
         membresTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                                                    boolean isSelected, boolean hasFocus,
-                                                    int row, int column) {
+        public Component getTableCellRendererComponent(
+            JTable table, 
+            Object value,
+            boolean isSelected, 
+            boolean hasFocus,
+            int row, 
+            int column) {
 
             Component c = super.getTableCellRendererComponent(
                     table, value, isSelected, hasFocus, row, column);
@@ -288,6 +292,11 @@ public class GestionMembrePanel extends JPanel {
         adresseField.setFont(UIConstants.fieldFont);
         poidsField.setFont(UIConstants.fieldFont);
         passwordField.setFont(UIConstants.fieldFont);
+
+        identifiantField.setToolTipText("Identifiant unique à utiliser lors de la connexion.");
+        telField.setToolTipText("8 chiffres");
+        dateNaissanceField.setToolTipText("format : jj-mm-aaaa");
+        poidsField.setToolTipText("Poids en Kg");
 
         form.add(createLabel("Identifiant:", UIConstants.labelFont));
         form.add(identifiantField);

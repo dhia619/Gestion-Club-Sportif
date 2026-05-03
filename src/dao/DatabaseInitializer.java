@@ -15,6 +15,7 @@ public class DatabaseInitializer {
             Statement stmt = conn.createStatement();
     
             stmt.execute(DatabaseSchema.CREATE_UTILISATEURS);
+            stmt.execute(DatabaseSchema.CREATE_ACTIVITES);
             stmt.close();
             conn.close();
 
