@@ -38,6 +38,28 @@ public class Utilisateur {
         this.role = role;
     }
 
+    public Utilisateur(
+        String nom, 
+        String prenom, 
+        LocalDate dateNaissance, 
+        String telephone, 
+        String adresse, 
+        double poids, 
+        String login, 
+        String motDePasse,
+        String role
+    ) {
+        this.nom = nom;
+        this.prenom = prenom;
+        this.dateNaissance = dateNaissance;
+        this.telephone = telephone;
+        this.adresse = adresse;
+        this.poids = poids;
+        this.login = login;
+        this.motDePasse = motDePasse;
+        this.role = role;
+    }
+
     public int getId(){
         return this.id;
     }

@@ -7,6 +7,7 @@ import model.Utilisateur;
 import service.AuthService;
 import view.LoginPanel;
 import view.MainFrame;
+import view.PopUpHandler;
 
 public class LoginController {
 
@@ -33,10 +34,10 @@ public class LoginController {
         Utilisateur utilisateur;
 
         if (identifiant.isBlank()){
-            this.view.showErrorMessage("Veuillez entrer votre identifiant.");
+            PopUpHandler.showError(this.view, "Veuillez entrer votre identifiant.");
         }
         else if (motDePasse.isBlank()){
-            this.view.showErrorMessage("Veuillez entrer votre mot de passe.");
+            PopUpHandler.showError(this.view, "Veuillez entrer votre mot de passe.");
         }
         else {
             utilisateur = authService.authenticate(identifiant, motDePasse);
@@ -47,7 +48,7 @@ public class LoginController {
                     mainFrame.showMemberDashboard(utilisateur);
                 }
             } else {
-                this.view.showErrorMessage("Identifiant ou mot de passe incorrect.");
+                PopUpHandler.showError(this.view, "Identifiant ou mot de passe incorrect.");
             }
         }
     }

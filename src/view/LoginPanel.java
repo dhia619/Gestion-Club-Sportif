@@ -20,7 +20,7 @@ import javax.swing.JTextField;
 
 import util.UIConstants;
 
-public class LoginPanel extends JPanel{
+public class LoginPanel extends JPanel {
 
     JTextField identifiantField;
     JPasswordField motDePasseField;
@@ -142,9 +142,5 @@ public class LoginPanel extends JPanel{
 
     public JButton getLoginButton() {
         return loginButton;
-    }
-
-    public void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Erreur", JOptionPane.ERROR_MESSAGE);
     }
 }

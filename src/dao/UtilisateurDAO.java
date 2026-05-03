@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.sql.Date;
 
 import model.Utilisateur;
 
@@ -74,6 +76,80 @@ public class UtilisateurDAO {
             success = rowsInserted > 0;
         } catch (SQLException e) {
             System.out.println("Error adding utilisateur: " + e.getMessage());
+        } finally {
+            try {
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                System.out.println("Error closing connection: " + e.getMessage());
+            }
+        }
+        return success;
+    }
+
+    public ArrayList<Utilisateur> getAllUtilisateurs() {
+        Connection connection = DatabaseConnection.getConnection();
+        ArrayList<Utilisateur> utilisateurs = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM utilisateurs where role='MEMBRE'";
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Utilisateur utilisateur = mapResultSetToUtilisateur(resultSet);
+                utilisateurs.add(utilisateur);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching utilisateurs: " + e.getMessage());
+        } finally {
+            try {
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                System.out.println("Error closing connection: " + e.getMessage());
+            }
+        }
+        return utilisateurs;
+    }
+
+    public boolean updateUtilisateur(Utilisateur utilisateur){
+        Connection connection = DatabaseConnection.getConnection();
+        boolean success = false;
+        try {
+            String query = "UPDATE utilisateurs SET nom = ?, prenom = ?, date_naissance = ?, telephone = ?, adresse = ?, poids = ?, login = ?, mot_de_passe = ? WHERE id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, utilisateur.getNom());
+            statement.setString(2, utilisateur.getPrenom());
+            statement.setDate(3, Date.valueOf(utilisateur.getDateNaissance()));
+            statement.setString(4, utilisateur.getTelephone());
+            statement.setString(5, utilisateur.getAdresse());
+            statement.setDouble(6, utilisateur.getPoids());
+            statement.setString(7, utilisateur.getLogin());
+            statement.setString(8, utilisateur.getMotDePasse());
+            statement.setInt(9, utilisateur.getId());
+            int rowsUpdated = statement.executeUpdate();
+            success = rowsUpdated > 0;
+            System.out.println(statement);
+        } catch (SQLException e) {
+            System.out.println("Error updating utilisateur: " + e.getMessage());
+        } finally {
+            try {
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                System.out.println("Error closing connection: " + e.getMessage());
+            }
+        }
+        return success;
+    }
+
+    public boolean deleteUtilisateurById(int id) {
+        Connection connection = DatabaseConnection.getConnection();
+        boolean success = false;
+        try {
+            String query = "DELETE FROM utilisateurs WHERE id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+            int rowsDeleted = statement.executeUpdate();
+            success = rowsDeleted > 0;
+        } catch (SQLException e) {
+            System.out.println("Error deleting utilisateur: " + e.getMessage());
         } finally {
             try {
                 if (connection != null) connection.close();
