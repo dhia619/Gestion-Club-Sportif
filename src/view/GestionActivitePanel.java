@@ -60,16 +60,7 @@ public class GestionActivitePanel extends JPanel {
         panel.setOpaque(false);
         panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 16, 0));
 
-        ajouterButton = new JButton("+ Ajouter");
-        ajouterButton.setFont(UIConstants.labelFont);
-        ajouterButton.setForeground(Color.WHITE);
-        ajouterButton.setBackground(UIConstants.primaryBgColor);
-        ajouterButton.setOpaque(true);
-        ajouterButton.setBorderPainted(false);
-        ajouterButton.setFocusPainted(false);
-        ajouterButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        ajouterButton.setPreferredSize(new Dimension(120, 36));
-
+        ajouterButton = new CustomButton("Ajouter", UIConstants.menuButtonBackgroundColor);
         ajouterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
@@ -100,38 +91,11 @@ public class GestionActivitePanel extends JPanel {
         }
 
         DefaultTableModel model = new DefaultTableModel(data, columns);
-        activitesTable = new JTable(model);
-        activitesTable.setRowHeight(36);
-        activitesTable.setFont(new Font("Arial", Font.PLAIN, 14));
-        activitesTable.setShowGrid(false);
-        activitesTable.setIntercellSpacing(new Dimension(0, 0));
-        activitesTable.setSelectionBackground(UIConstants.tableSelectionBackgroundColor);
-        activitesTable.setSelectionForeground(UIConstants.tableSelctionForegroundColor);
-        activitesTable.setForeground(UIConstants.tableForegroundColor);
+        activitesTable = new CustomTable(model);
 
-        activitesTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                                                    boolean isSelected, boolean hasFocus,
-                                                    int row, int column) {
-
-            Component c = super.getTableCellRendererComponent(
-                    table, value, isSelected, hasFocus, row, column);
-
-            if (!isSelected) {
-                c.setBackground(row % 2 == 0
-                    ? UIConstants.tableRowEvenColor
-                    : UIConstants.tableRowOddColor);
-            }
-
-            return c;
-        }
-    });
-
-        JTableHeader header = activitesTable.getTableHeader();
-        header.setBackground(UIConstants.tableHeaderBackgroundColor);
-        header.setForeground(UIConstants.tableHeaderForegroundColor);
-        header.setFont(UIConstants.fieldFont);
+        JScrollPane scrollPane = new JScrollPane(activitesTable);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(220, 224, 230), 1, true));
+        scrollPane.setBackground(Color.WHITE);
 
 
         JPopupMenu popupMenu = new JPopupMenu();
@@ -174,7 +138,7 @@ public class GestionActivitePanel extends JPanel {
             }
         });
 
-        return new JScrollPane(activitesTable);
+        return scrollPane;
     }
 
     public void refreshTable(ArrayList<Activite> activites) {
@@ -205,7 +169,7 @@ public class GestionActivitePanel extends JPanel {
     private JPanel createListPage(ArrayList<Activite> activites) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(UIConstants.secondaryBgColor);
+        panel.setBackground(UIConstants.secondaryBackgroundColor);
         panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
         panel.add(createTopActions());
@@ -258,39 +222,31 @@ public class GestionActivitePanel extends JPanel {
     private JPanel createFormulaire() {
         JPanel form = new JPanel(new GridLayout(9, 2, 10, 10));
         form.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
-        form.setBackground(UIConstants.secondaryBgColor);
+        form.setBackground(UIConstants.secondaryBackgroundColor);
 
-        nomField = new JTextField();
-        descriptionField = new JTextField();
-        capaciteMaxField = new JTextField();
-        dateField = new JTextField();
-        timeSpinner = new JSpinner(new SpinnerDateModel());
+        nomField = new CustomTextField();
+        descriptionField = new CustomTextField();
+        capaciteMaxField = new CustomTextField();
+        dateField = new CustomTextField();
+        timeSpinner = new CustomSpinner(new SpinnerDateModel());
         timeSpinner.setEditor(new JSpinner.DateEditor(timeSpinner, "HH:mm"));
 
-        nomField.setFont(UIConstants.fieldFont);
-        descriptionField.setFont(UIConstants.fieldFont);
-        capaciteMaxField.setFont(UIConstants.fieldFont);
-        dateField.setFont(UIConstants.fieldFont);
-        timeSpinner.setFont(UIConstants.fieldFont);
-
-        form.add(createLabel("Nom:", UIConstants.labelFont));
+        form.add(new CustomLabel("Nom:"));
         form.add(nomField);
 
-        form.add(createLabel("Description:", UIConstants.labelFont));
+        form.add(new CustomLabel("Description:"));
         form.add(descriptionField);
 
-        form.add(createLabel("Capacité Maximale:", UIConstants.labelFont));
+        form.add(new CustomLabel("Capacité Maximale:"));
         form.add(capaciteMaxField);
 
-        form.add(createLabel("Date:", UIConstants.labelFont));
+        form.add(new CustomLabel("Date:"));
         form.add(dateField);
 
-        form.add(createLabel("Horaire:", UIConstants.labelFont));
+        form.add(new CustomLabel("Horaire:"));
         form.add(timeSpinner);
 
-        submitButton = new JButton();
-        submitButton.setFont(UIConstants.buttonFont);
-        submitButton.setFocusPainted(false);
+        submitButton = new CustomButton("", UIConstants.emeraldGreen);
 
         form.add(new JLabel());
         form.add(submitButton);
@@ -326,11 +282,15 @@ public class GestionActivitePanel extends JPanel {
         topBar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 50));
         topBar.setBackground(Color.WHITE);
 
-        retourButton = new JButton("Retour");
-        retourButton.addActionListener(e -> cardLayout.show(container, "list"));
+        retourButton = new CustomButton("Retour", UIConstants.concreteGrey);
+        retourButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                cardLayout.show(container, "list");
+            }
+        });
 
-        formTitle = new JLabel("Ajouter un activite");
-        formTitle.setFont(UIConstants.labelFont);
+        formTitle = new CustomLabel("Ajouter un activite", UIConstants.primaryTextColor, 20);
 
         topBar.add(retourButton);
         topBar.add(Box.createHorizontalStrut(20));
@@ -365,11 +325,5 @@ public class GestionActivitePanel extends JPanel {
 
     public Date getHoraire() {
         return (Date) timeSpinner.getValue();
-    }
-
-    private JLabel createLabel(String text, Font font) {
-        JLabel label = new JLabel(text);
-        label.setFont(font);
-        return label;
     }
 }

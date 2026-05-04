@@ -61,15 +61,7 @@ public class GestionMembrePanel extends JPanel {
         panel.setOpaque(false);
         panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 16, 0));
 
-        ajouterButton = new JButton("+ Ajouter");
-        ajouterButton.setFont(UIConstants.labelFont);
-        ajouterButton.setForeground(Color.WHITE);
-        ajouterButton.setBackground(UIConstants.primaryBgColor);
-        ajouterButton.setOpaque(true);
-        ajouterButton.setBorderPainted(false);
-        ajouterButton.setFocusPainted(false);
-        ajouterButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        ajouterButton.setPreferredSize(new Dimension(120, 36));
+        ajouterButton = new CustomButton("Ajouter", UIConstants.menuButtonBackgroundColor, Color.WHITE);
 
         ajouterButton.addActionListener(new ActionListener() {
             @Override
@@ -103,43 +95,11 @@ public class GestionMembrePanel extends JPanel {
         }
 
         DefaultTableModel model = new DefaultTableModel(data, columns);
-        membresTable = new JTable(model);
-        membresTable.setRowHeight(36);
-        membresTable.setFont(new Font("Arial", Font.PLAIN, 14));
-        membresTable.setShowGrid(false);
-        membresTable.setIntercellSpacing(new Dimension(0, 0));
-        membresTable.setSelectionBackground(UIConstants.tableSelectionBackgroundColor);
-        membresTable.setSelectionForeground(UIConstants.tableSelctionForegroundColor);
-        membresTable.setForeground(UIConstants.tableForegroundColor);
+        membresTable = new CustomTable(model);
 
-        membresTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-        @Override
-        public Component getTableCellRendererComponent(
-            JTable table, 
-            Object value,
-            boolean isSelected, 
-            boolean hasFocus,
-            int row, 
-            int column) {
-
-            Component c = super.getTableCellRendererComponent(
-                    table, value, isSelected, hasFocus, row, column);
-
-            if (!isSelected) {
-                c.setBackground(row % 2 == 0
-                    ? UIConstants.tableRowEvenColor
-                    : UIConstants.tableRowOddColor);
-            }
-
-            return c;
-        }
-    });
-
-        JTableHeader header = membresTable.getTableHeader();
-        header.setBackground(UIConstants.tableHeaderBackgroundColor);
-        header.setForeground(UIConstants.tableHeaderForegroundColor);
-        header.setFont(UIConstants.fieldFont);
-
+        JScrollPane scrollPane = new JScrollPane(membresTable);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(220, 224, 230), 1, true));
+        scrollPane.setBackground(Color.WHITE);
 
         JPopupMenu popupMenu = new JPopupMenu();
 
@@ -181,7 +141,7 @@ public class GestionMembrePanel extends JPanel {
             }
         });
 
-        return new JScrollPane(membresTable);
+        return scrollPane;
     }
 
     public void refreshTable(ArrayList<Utilisateur> membres) {
@@ -214,7 +174,7 @@ public class GestionMembrePanel extends JPanel {
     private JPanel createListPage(ArrayList<Utilisateur> membres) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(UIConstants.secondaryBgColor);
+        panel.setBackground(UIConstants.secondaryBackgroundColor);
         panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
         panel.add(createTopActions());
@@ -273,58 +233,47 @@ public class GestionMembrePanel extends JPanel {
     private JPanel createFormulaire() {
         JPanel form = new JPanel(new GridLayout(9, 2, 10, 10));
         form.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
-        form.setBackground(UIConstants.secondaryBgColor);
+        form.setBackground(UIConstants.secondaryBackgroundColor);
 
-        identifiantField = new JTextField();
-        nomField = new JTextField();
-        prenomField = new JTextField();
-        dateNaissanceField = new JTextField();
-        telField = new JTextField();
-        adresseField = new JTextField();
-        poidsField = new JTextField();
-        passwordField = new JPasswordField();
-
-        identifiantField.setFont(UIConstants.fieldFont);
-        nomField.setFont(UIConstants.fieldFont);
-        prenomField.setFont(UIConstants.fieldFont);
-        dateNaissanceField.setFont(UIConstants.fieldFont);
-        telField.setFont(UIConstants.fieldFont);
-        adresseField.setFont(UIConstants.fieldFont);
-        poidsField.setFont(UIConstants.fieldFont);
-        passwordField.setFont(UIConstants.fieldFont);
+        identifiantField = new CustomTextField();
+        nomField = new CustomTextField();
+        prenomField = new CustomTextField();
+        dateNaissanceField = new CustomTextField();
+        telField = new CustomTextField();
+        adresseField = new CustomTextField();
+        poidsField = new CustomTextField();
+        passwordField = new CustomPasswordField();
 
         identifiantField.setToolTipText("Identifiant unique à utiliser lors de la connexion.");
         telField.setToolTipText("8 chiffres");
-        dateNaissanceField.setToolTipText("format : jj-mm-aaaa");
+        dateNaissanceField.setToolTipText("format : AAAA-MM-JJ");
         poidsField.setToolTipText("Poids en Kg");
 
-        form.add(createLabel("Identifiant:", UIConstants.labelFont));
+        form.add(new CustomLabel("Identifiant:"));
         form.add(identifiantField);
 
-        form.add(createLabel("Nom:", UIConstants.labelFont));
+        form.add(new CustomLabel("Nom:"));
         form.add(nomField);
 
-        form.add(createLabel("Prénom:", UIConstants.labelFont));
+        form.add(new CustomLabel("Prénom:"));
         form.add(prenomField);
 
-        form.add(createLabel("Date de naissance:", UIConstants.labelFont));
+        form.add(new CustomLabel("Date de naissance:"));
         form.add(dateNaissanceField);
 
-        form.add(createLabel("Téléphone:", UIConstants.labelFont));
+        form.add(new CustomLabel("Téléphone:"));
         form.add(telField);
 
-        form.add(createLabel("Adresse:", UIConstants.labelFont));
+        form.add(new CustomLabel("Adresse:"));
         form.add(adresseField);
 
-        form.add(createLabel("Poids:", UIConstants.labelFont));
+        form.add(new CustomLabel("Poids:"));
         form.add(poidsField);
 
-        form.add(createLabel("Mot de passe:", UIConstants.labelFont));
+        form.add(new CustomLabel("Mot de passe:"));
         form.add(passwordField);
 
-        submitButton = new JButton();
-        submitButton.setFont(UIConstants.buttonFont);
-        submitButton.setFocusPainted(false);
+        submitButton = new CustomButton("Ajouter", UIConstants.emeraldGreen);
 
         form.add(new JLabel());
         form.add(submitButton);
@@ -357,14 +306,18 @@ public class GestionMembrePanel extends JPanel {
 
         JPanel topBar = new JPanel();
         topBar.setLayout(new BoxLayout(topBar, BoxLayout.X_AXIS));
-        topBar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 50));
+        topBar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 50));
         topBar.setBackground(Color.WHITE);
 
-        retourButton = new JButton("Retour");
-        retourButton.addActionListener(e -> cardLayout.show(container, "list"));
+        retourButton = new CustomButton("Retour", UIConstants.concreteGrey);
+        retourButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                cardLayout.show(container, "list");
+            }
+        });
 
-        formTitle = new JLabel("Ajouter un membre");
-        formTitle.setFont(UIConstants.labelFont);
+        formTitle = new CustomLabel("Ajouter un membre", UIConstants.primaryTextColor, 20);
 
         topBar.add(retourButton);
         topBar.add(Box.createHorizontalStrut(20));
@@ -412,9 +365,4 @@ public class GestionMembrePanel extends JPanel {
         return new String(passwordField.getPassword());
     }
 
-    private JLabel createLabel(String text, Font font) {
-        JLabel label = new JLabel(text);
-        label.setFont(font);
-        return label;
-    }
 }

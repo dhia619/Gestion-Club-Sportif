@@ -31,11 +31,9 @@ public class AdminDashboardPanel extends JPanel {
         topBar.setBackground(Color.WHITE);
         topBar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        JLabel title = new JLabel("Dashboard Administrateur");
-        title.setFont(new Font("Arial", Font.BOLD, 22));
+        JLabel title = new CustomLabel("Dashboard Administrateur", UIConstants.navy, "Georgia", Font.ITALIC, 22);
 
-        logoutButton = new JButton("Déconnexion");
-        logoutButton.setFocusable(false);
+        logoutButton = new CustomButton("Déconnexion", UIConstants.terracotta);
 
         topBar.add(title, BorderLayout.WEST);
         topBar.add(logoutButton, BorderLayout.EAST);
@@ -46,7 +44,7 @@ public class AdminDashboardPanel extends JPanel {
     private JPanel createSidebar() {
         JPanel sidebar = new JPanel();
         sidebar.setPreferredSize(new Dimension(220, 0));
-        sidebar.setBackground(UIConstants.primaryBgColor);
+        sidebar.setBackground(UIConstants.primaryBackgroundColor);
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setBorder(BorderFactory.createEmptyBorder(20, 15, 20, 15));
 
@@ -68,13 +66,8 @@ public class AdminDashboardPanel extends JPanel {
     }
 
     private JButton createMenuButton(String text, String cardName) {
-        JButton button = new JButton(text);
+        JButton button = new CustomButton(text, UIConstants.menuButtonBackgroundColor);
         button.setMaximumSize(new Dimension(190, 45));
-        button.setFont(new Font("Arial", Font.BOLD, 15));
-        button.setForeground(Color.WHITE);
-        button.setBackground(UIConstants.menuItemsBgColor);
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
         button.setHorizontalAlignment(SwingConstants.LEFT);
 
         button.addActionListener(new ActionListener() {
@@ -130,11 +123,8 @@ public class AdminDashboardPanel extends JPanel {
     private JPanel gestionSuiviPage() {
         JPanel panel = createBasePage("Suivi et gestion");
 
-        JLabel complete = new JLabel("Activités complètes : Musculation, Natation");
-        JLabel active = new JLabel("Membres les plus actifs : Sami, Lina");
-
-        complete.setFont(new Font("Arial", Font.PLAIN, 16));
-        active.setFont(new Font("Arial", Font.PLAIN, 16));
+        JLabel complete = new CustomLabel("Activités complètes : Musculation, Natation");
+        JLabel active = new CustomLabel("Membres les plus actifs : Sami, Lina");
 
         panel.add(complete);
         panel.add(active);
@@ -145,11 +135,10 @@ public class AdminDashboardPanel extends JPanel {
     private JPanel createBasePage(String titleText) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(UIConstants.secondaryBgColor);
+        panel.setBackground(UIConstants.secondaryBackgroundColor);
         panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
-        JLabel title = new JLabel(titleText);
-        title.setFont(new Font("Arial", Font.BOLD, 24));
+        JLabel title = new CustomLabel(titleText, 24);
         title.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         panel.add(title);

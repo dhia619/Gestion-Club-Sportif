@@ -126,7 +126,6 @@ public class UtilisateurDAO {
             statement.setInt(9, utilisateur.getId());
             int rowsUpdated = statement.executeUpdate();
             success = rowsUpdated > 0;
-            System.out.println(statement);
         } catch (SQLException e) {
             System.out.println("Error updating utilisateur: " + e.getMessage());
         } finally {

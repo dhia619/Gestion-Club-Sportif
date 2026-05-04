@@ -10,10 +10,8 @@ import java.awt.GridLayout;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -32,15 +30,14 @@ public class LoginPanel extends JPanel {
         JPanel leftChild = new JPanel();
         JPanel rightChild = new JPanel();
 
-        leftChild.setBackground(UIConstants.primaryBgColor);
-        rightChild.setBackground(UIConstants.secondaryBgColor);
+        leftChild.setBackground(UIConstants.primaryBackgroundColor);
+        rightChild.setBackground(UIConstants.secondaryBackgroundColor);
 
         this.add(leftChild);
         this.add(rightChild);
 
-        // ================= LEFT CHILD =================
 
-        leftChild.setLayout(new BorderLayout());
+        leftChild.setLayout(new GridBagLayout());
 
         JPanel centerPanel = new JPanel();
 
@@ -48,70 +45,38 @@ public class LoginPanel extends JPanel {
 
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 
-        JLabel welcomeLabel = new JLabel("Bienvenue au");
-        JLabel clubNameLabel = new JLabel("Club Sportif");
-        JLabel sloganLabel = new JLabel("Le sport pour tous");
-
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        clubNameLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        sloganLabel.setFont(new Font("Arial", Font.PLAIN, 17));
-
-        welcomeLabel.setForeground(Color.WHITE);
-        clubNameLabel.setForeground(Color.WHITE);
-        sloganLabel.setForeground(Color.WHITE);
+        JLabel welcomeLabel = new CustomLabel("Bienvenue au", UIConstants.navy, "Georgia", Font.PLAIN, 31);
+        JLabel clubNameLabel = new CustomLabel("Club Sportif", UIConstants.primaryTextColor, "Georgia", Font.ITALIC, 37);
+        JLabel sloganLabel = new CustomLabel("Le sport pour tous", UIConstants.navy, "Georgia", Font.ITALIC, 25);
 
         welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         clubNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         sloganLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        centerPanel.add(Box.createVerticalStrut(100));
         centerPanel.add(welcomeLabel);
         centerPanel.add(Box.createVerticalStrut(5));
         centerPanel.add(clubNameLabel);
         centerPanel.add(Box.createVerticalStrut(10));
         centerPanel.add(sloganLabel);
 
-        leftChild.add(centerPanel, BorderLayout.CENTER);
+        leftChild.add(centerPanel);
 
-        // ================= RIGHT CHILD =================
 
         rightChild.setLayout(new GridBagLayout());
 
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
-        formPanel.setBackground(UIConstants.secondaryBgColor);
+        formPanel.setBackground(UIConstants.secondaryBackgroundColor);
 
-        JLabel titleLabel = new JLabel("Se connecter");
-        JLabel identifiantLabel = new JLabel("Identifiant");
-        JLabel motDePasseLabel = new JLabel("Mot de passe");
+        JLabel titleLabel = new CustomLabel("Se connecter", UIConstants.navy, "Georgia", Font.ITALIC, 25);
+        JLabel identifiantLabel = new CustomLabel("IDENTIFIANT", UIConstants.secondaryTextColor, "Arial", Font.PLAIN, 13);
+        JLabel motDePasseLabel = new CustomLabel("MOT DE PASSE", UIConstants.secondaryTextColor, "Arial", Font.PLAIN, 13);
 
-        titleLabel.setFont(new Font("Courier", Font.BOLD, 27));
-        identifiantLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        motDePasseLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        identifiantField = new CustomTextField();
+        motDePasseField = new CustomPasswordField();
 
-        identifiantField = new JTextField();
-        motDePasseField = new JPasswordField();
-
-        identifiantField.setFont(new Font("Arial", Font.BOLD, 17));
-        motDePasseField.setFont(new Font("Arial", Font.BOLD, 17));
-
-        Dimension inputSize = new Dimension(300, 40);
-
-        identifiantField.setPreferredSize(inputSize);
-        motDePasseField.setPreferredSize(inputSize);
-
-        loginButton = new JButton("Se connecter");
-        loginButton.setFont(new Font("Arial", Font.BOLD, 18));
-        loginButton.setFocusable(false);
-        loginButton.setPreferredSize(new Dimension(300, 42));
-        //loginButton.addActionListener(this);
-
-        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        identifiantLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        identifiantField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        motDePasseLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        motDePasseField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        loginButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        loginButton = new CustomButton("Se connecter", UIConstants.belizeBlue);
+        loginButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, loginButton.getPreferredSize().height));
 
         formPanel.add(titleLabel);
         formPanel.add(Box.createVerticalStrut(25));

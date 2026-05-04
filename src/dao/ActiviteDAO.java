@@ -95,7 +95,6 @@ public class ActiviteDAO {
             statement.setInt(5, activite.getId());
             int rowsUpdated = statement.executeUpdate();
             success = rowsUpdated > 0;
-            System.out.println(statement);
         } catch (SQLException e) {
             System.out.println("Error updating activite: " + e.getMessage());
         } finally {
