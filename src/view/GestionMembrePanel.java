@@ -7,15 +7,18 @@ import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.event.MouseEvent;
 
-import javax.swing.table.DefaultTableModel;
-
 import model.Utilisateur;
+import util.Lang;
 import util.UIConstants;
+import view.components.CustomButton;
+import view.components.CustomLabel;
+import view.components.CustomPasswordField;
+import view.components.CustomTable;
+import view.components.CustomTextField;
 
 public class GestionMembrePanel extends JPanel {
 
@@ -23,6 +26,7 @@ public class GestionMembrePanel extends JPanel {
     private JPanel container;
 
     private JTable membresTable;
+
     private JButton ajouterButton;
     private JButton submitButton;
     private JButton retourButton;
@@ -36,12 +40,23 @@ public class GestionMembrePanel extends JPanel {
     private JTextField poidsField;
     private JPasswordField passwordField;
 
-    private String formMode = "ADD";
-    private int editedMemberId = -1;
+    private JLabel titleLabel;
     private JLabel formTitle;
 
-    JMenuItem deleteItem;
-    JMenuItem editItem;
+    private JLabel identifiantLabel;
+    private JLabel nomLabel;
+    private JLabel prenomLabel;
+    private JLabel dateNaissanceLabel;
+    private JLabel telLabel;
+    private JLabel adresseLabel;
+    private JLabel poidsLabel;
+    private JLabel passwordLabel;
+
+    private String formMode = "ADD";
+    private int editedMemberId = -1;
+
+    private JMenuItem deleteItem;
+    private JMenuItem editItem;
 
     public GestionMembrePanel(ArrayList<Utilisateur> membres) {
         cardLayout = new CardLayout();
@@ -50,9 +65,12 @@ public class GestionMembrePanel extends JPanel {
         container.add(createListPage(membres), "list");
         container.add(createMembreForm(), "form");
 
+        titleLabel = new CustomLabel(Lang.get("manage.members"), 24);
+
         setLayout(new BorderLayout());
+        add(titleLabel, BorderLayout.NORTH);
         add(container, BorderLayout.CENTER);
-        
+
         setAlignmentX(Component.LEFT_ALIGNMENT);
     }
 
@@ -61,7 +79,11 @@ public class GestionMembrePanel extends JPanel {
         panel.setOpaque(false);
         panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 16, 0));
 
-        ajouterButton = new CustomButton("Ajouter", UIConstants.menuButtonBackgroundColor, Color.WHITE);
+        ajouterButton = new CustomButton(
+                Lang.get("button.add"),
+                UIConstants.menuButtonBackgroundColor,
+                Color.WHITE
+        );
 
         ajouterButton.addActionListener(new ActionListener() {
             @Override
@@ -75,26 +97,11 @@ public class GestionMembrePanel extends JPanel {
     }
 
     private JScrollPane createTablePanel(ArrayList<Utilisateur> membres) {
-        String[] columns = {
-            "ID", "Identifiant", "Nom", "Prénom", "Téléphone", "Date de naissance", "Adresse", "Poids"
-        };
+        DefaultTableModel model = new DefaultTableModel(
+                getTableData(membres),
+                getTableColumns()
+        );
 
-        Object[][] data = new Object[membres.size()][8];
-        for (int i = 0; i < membres.size(); i++) {
-            Utilisateur membre = membres.get(i);
-            data[i] = new Object[] {
-                membre.getId(),
-                membre.getLogin(),
-                membre.getNom(),
-                membre.getPrenom(),
-                membre.getTelephone(),
-                membre.getDateNaissance(),
-                membre.getAdresse(),
-                membre.getPoids()
-            };
-        }
-
-        DefaultTableModel model = new DefaultTableModel(data, columns);
         membresTable = new CustomTable(model);
 
         JScrollPane scrollPane = new JScrollPane(membresTable);
@@ -103,20 +110,17 @@ public class GestionMembrePanel extends JPanel {
 
         JPopupMenu popupMenu = new JPopupMenu();
 
-        deleteItem = new JMenuItem("Supprimer");
-        editItem = new JMenuItem("Modifier");
+        deleteItem = new JMenuItem(Lang.get("button.delete"));
+        editItem = new JMenuItem(Lang.get("button.edit"));
 
-        ImageIcon deleteIcon = new ImageIcon("./resources/images/delete.png");
-        ImageIcon editIcon = new ImageIcon("./resources/images/edit.png");
-
-        editItem.setIcon(editIcon);
-        deleteItem.setIcon(deleteIcon);
+        deleteItem.setIcon(new ImageIcon("./resources/images/delete.png"));
+        editItem.setIcon(new ImageIcon("./resources/images/edit.png"));
 
         popupMenu.add(editItem);
         popupMenu.add(deleteItem);
 
         membresTable.addMouseListener(new MouseAdapter() {
-            
+
             public void mousePressed(MouseEvent e) {
                 if (e.isPopupTrigger()) showMenu(e);
             }
@@ -144,6 +148,40 @@ public class GestionMembrePanel extends JPanel {
         return scrollPane;
     }
 
+    private Object[] getTableColumns() {
+        return new Object[] {
+                "ID",
+                Lang.get("user.username"),
+                Lang.get("user.lastname"),
+                Lang.get("user.firstname"),
+                Lang.get("user.tel"),
+                Lang.get("user.birthdate"),
+                Lang.get("user.address"),
+                Lang.get("user.weight")
+        };
+    }
+
+    private Object[][] getTableData(ArrayList<Utilisateur> membres) {
+        Object[][] data = new Object[membres.size()][8];
+
+        for (int i = 0; i < membres.size(); i++) {
+            Utilisateur membre = membres.get(i);
+
+            data[i] = new Object[] {
+                    membre.getId(),
+                    membre.getLogin(),
+                    membre.getNom(),
+                    membre.getPrenom(),
+                    membre.getTelephone(),
+                    membre.getDateNaissance(),
+                    membre.getAdresse(),
+                    membre.getPoids()
+            };
+        }
+
+        return data;
+    }
+
     public void refreshTable(ArrayList<Utilisateur> membres) {
         DefaultTableModel model = (DefaultTableModel) membresTable.getModel();
 
@@ -151,25 +189,17 @@ public class GestionMembrePanel extends JPanel {
 
         for (Utilisateur membre : membres) {
             model.addRow(new Object[] {
-                membre.getId(),
-                membre.getLogin(),
-                membre.getNom(),
-                membre.getPrenom(),
-                membre.getTelephone(),
-                membre.getDateNaissance(),
-                membre.getAdresse(),
-                membre.getPoids()
+                    membre.getId(),
+                    membre.getLogin(),
+                    membre.getNom(),
+                    membre.getPrenom(),
+                    membre.getTelephone(),
+                    membre.getDateNaissance(),
+                    membre.getAdresse(),
+                    membre.getPoids()
             });
         }
     }
-
-    public JMenuItem getDeleteItem() {
-        return deleteItem;
-    }
-
-    public JMenuItem getEditItem() {
-        return editItem;
-    } 
 
     private JPanel createListPage(ArrayList<Utilisateur> membres) {
         JPanel panel = new JPanel();
@@ -186,18 +216,16 @@ public class GestionMembrePanel extends JPanel {
     public void showAddForm() {
         formMode = "ADD";
         editedMemberId = -1;
-        formTitle.setText("Ajouter un membre");
-        submitButton.setText("Ajouter");
+
+        refreshUIText();
         clearForm();
+
         cardLayout.show(container, "form");
     }
 
     public void showEditForm(Utilisateur membre) {
         formMode = "EDIT";
         editedMemberId = membre.getId();
-
-        formTitle.setText("Modifier un membre");
-        submitButton.setText("Enregistrer");
 
         identifiantField.setText(membre.getLogin());
         nomField.setText(membre.getNom());
@@ -208,26 +236,9 @@ public class GestionMembrePanel extends JPanel {
         poidsField.setText(String.valueOf(membre.getPoids()));
         passwordField.setText(membre.getMotDePasse());
 
+        refreshUIText();
+
         cardLayout.show(container, "form");
-    }
-
-    public boolean isEditMode() {
-        return formMode.equals("EDIT");
-    }
-
-    public int getEditedMemberId() {
-        return editedMemberId;
-    }
-
-    public void clearForm() {
-        identifiantField.setText("");
-        nomField.setText("");
-        prenomField.setText("");
-        dateNaissanceField.setText("");
-        telField.setText("");
-        adresseField.setText("");
-        poidsField.setText("");
-        passwordField.setText("");
     }
 
     private JPanel createFormulaire() {
@@ -244,72 +255,66 @@ public class GestionMembrePanel extends JPanel {
         poidsField = new CustomTextField();
         passwordField = new CustomPasswordField();
 
-        identifiantField.setToolTipText("Identifiant unique à utiliser lors de la connexion.");
-        telField.setToolTipText("8 chiffres");
-        dateNaissanceField.setToolTipText("format : AAAA-MM-JJ");
-        poidsField.setToolTipText("Poids en Kg");
+        identifiantLabel = new CustomLabel(Lang.get("user.username"));
+        nomLabel = new CustomLabel(Lang.get("user.lastname"));
+        prenomLabel = new CustomLabel(Lang.get("user.firstname"));
+        dateNaissanceLabel = new CustomLabel(Lang.get("user.birthdate"));
+        telLabel = new CustomLabel(Lang.get("user.tel"));
+        adresseLabel = new CustomLabel(Lang.get("user.address"));
+        poidsLabel = new CustomLabel(Lang.get("user.weight"));
+        passwordLabel = new CustomLabel(Lang.get("password"));
 
-        form.add(new CustomLabel("Identifiant:"));
+        form.add(identifiantLabel);
         form.add(identifiantField);
 
-        form.add(new CustomLabel("Nom:"));
+        form.add(nomLabel);
         form.add(nomField);
 
-        form.add(new CustomLabel("Prénom:"));
+        form.add(prenomLabel);
         form.add(prenomField);
 
-        form.add(new CustomLabel("Date de naissance:"));
+        form.add(dateNaissanceLabel);
         form.add(dateNaissanceField);
 
-        form.add(new CustomLabel("Téléphone:"));
+        form.add(telLabel);
         form.add(telField);
 
-        form.add(new CustomLabel("Adresse:"));
+        form.add(adresseLabel);
         form.add(adresseField);
 
-        form.add(new CustomLabel("Poids:"));
+        form.add(poidsLabel);
         form.add(poidsField);
 
-        form.add(new CustomLabel("Mot de passe:"));
+        form.add(passwordLabel);
         form.add(passwordField);
 
-        submitButton = new CustomButton("Ajouter", UIConstants.emeraldGreen);
+        submitButton = new CustomButton(
+                Lang.get("button.create"),
+                UIConstants.emeraldGreen
+        );
 
         form.add(new JLabel());
         form.add(submitButton);
 
+        refreshTooltips();
+
         return form;
-    }
-
-    public JButton getSubmitMembreFormButton() {
-        return submitButton;
-    }
-
-    public JTable getMembresTable() {
-        return membresTable;
-    }
-
-    public int[] getSelectedMemberIds() {
-        int[] rows = membresTable.getSelectedRows();
-
-        int[] ids = new int[rows.length];
-
-        for (int i = 0; i < rows.length; i++) {
-            ids[i] = (int) membresTable.getValueAt(rows[i], 0);
-        }
-
-        return ids;
     }
 
     private JPanel createMembreForm() {
         JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
         JPanel topBar = new JPanel();
         topBar.setLayout(new BoxLayout(topBar, BoxLayout.X_AXIS));
         topBar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 50));
         topBar.setBackground(Color.WHITE);
 
-        retourButton = new CustomButton("Retour", UIConstants.concreteGrey);
+        retourButton = new CustomButton(
+                Lang.get("button.back"),
+                UIConstants.concreteGrey
+        );
+
         retourButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
@@ -317,7 +322,11 @@ public class GestionMembrePanel extends JPanel {
             }
         });
 
-        formTitle = new CustomLabel("Ajouter un membre", UIConstants.primaryTextColor, 20);
+        formTitle = new CustomLabel(
+                Lang.get("user.create"),
+                UIConstants.primaryTextColor,
+                20
+        );
 
         topBar.add(retourButton);
         topBar.add(Box.createHorizontalStrut(20));
@@ -329,8 +338,103 @@ public class GestionMembrePanel extends JPanel {
         return panel;
     }
 
+    public void refreshUIText() {
+        titleLabel.setText(Lang.get("manage.members"));
+
+        ajouterButton.setText(Lang.get("button.add"));
+        retourButton.setText(Lang.get("button.back"));
+
+        formTitle.setText(
+                isEditMode()
+                        ? Lang.get("user.edit")
+                        : Lang.get("user.create")
+        );
+
+        submitButton.setText(
+                isEditMode()
+                        ? Lang.get("button.save")
+                        : Lang.get("button.create")
+        );
+
+        identifiantLabel.setText(Lang.get("user.username"));
+        nomLabel.setText(Lang.get("user.lastname"));
+        prenomLabel.setText(Lang.get("user.firstname"));
+        dateNaissanceLabel.setText(Lang.get("user.birthdate"));
+        telLabel.setText(Lang.get("user.tel"));
+        adresseLabel.setText(Lang.get("user.address"));
+        poidsLabel.setText(Lang.get("user.weight"));
+        passwordLabel.setText(Lang.get("password"));
+
+        deleteItem.setText(Lang.get("button.delete"));
+        editItem.setText(Lang.get("button.edit"));
+
+        refreshTooltips();
+        refreshTableHeaders();
+
+        revalidate();
+        repaint();
+    }
+
+    private void refreshTooltips() {
+        identifiantField.setToolTipText(Lang.get("username.field.tooltip"));
+        telField.setToolTipText(Lang.get("tel.field.tooltip"));
+        dateNaissanceField.setToolTipText(Lang.get("birthdate.field.tooltip"));
+        poidsField.setToolTipText(Lang.get("weight.field.tooltip"));
+    }
+
+    private void refreshTableHeaders() {
+        DefaultTableModel model = (DefaultTableModel) membresTable.getModel();
+        model.setColumnIdentifiers(getTableColumns());
+    }
+
+    public void clearForm() {
+        identifiantField.setText("");
+        nomField.setText("");
+        prenomField.setText("");
+        dateNaissanceField.setText("");
+        telField.setText("");
+        adresseField.setText("");
+        poidsField.setText("");
+        passwordField.setText("");
+    }
+
+    public boolean isEditMode() {
+        return formMode.equals("EDIT");
+    }
+
+    public int getEditedMemberId() {
+        return editedMemberId;
+    }
+
+    public JButton getSubmitMembreFormButton() {
+        return submitButton;
+    }
+
+    public JTable getMembresTable() {
+        return membresTable;
+    }
+
+    public JMenuItem getDeleteItem() {
+        return deleteItem;
+    }
+
+    public JMenuItem getEditItem() {
+        return editItem;
+    }
+
     public CardLayout getCardLayout() {
         return cardLayout;
+    }
+
+    public int[] getSelectedMemberIds() {
+        int[] rows = membresTable.getSelectedRows();
+        int[] ids = new int[rows.length];
+
+        for (int i = 0; i < rows.length; i++) {
+            ids[i] = (int) membresTable.getValueAt(rows[i], 0);
+        }
+
+        return ids;
     }
 
     public String getIdentifiant(){
@@ -358,11 +462,10 @@ public class GestionMembrePanel extends JPanel {
     }
 
     public String getPoids(){
-        return  poidsField.getText();
+        return poidsField.getText();
     }
 
     public String getMotDePasse(){
         return new String(passwordField.getPassword());
     }
-
 }

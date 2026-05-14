@@ -1,18 +1,21 @@
-package view;
+package view.components;
 
 import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.BorderFactory;
-import javax.swing.JPasswordField;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
 
 import util.UIConstants;
 
-public class CustomPasswordField extends JPasswordField {
-    public CustomPasswordField(
+public class CustomSpinner extends JSpinner{
+    public CustomSpinner(
+        SpinnerModel spinnerModel,
         String fontName,
         int fontSize
     ){
+        super(spinnerModel);
         setFont(new Font(fontName, Font.PLAIN, fontSize));
         setForeground(UIConstants.navy);
         setBackground(UIConstants.textFieldBackgroundColor);
@@ -25,7 +28,7 @@ public class CustomPasswordField extends JPasswordField {
         setAlignmentX(LEFT_ALIGNMENT);
     }
 
-    public CustomPasswordField(){
-        this("bahnschrift", 15);
+    public CustomSpinner(SpinnerModel spinnerModel){
+        this(spinnerModel, "banschrift", 15);
     }
 }

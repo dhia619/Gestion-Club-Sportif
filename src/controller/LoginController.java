@@ -5,9 +5,10 @@ import java.awt.event.ActionListener;
 
 import model.Utilisateur;
 import service.AuthService;
+import util.Lang;
 import view.LoginPanel;
 import view.MainFrame;
-import view.PopUpHandler;
+import view.components.PopUpHandler;
 
 public class LoginController {
 
@@ -34,10 +35,10 @@ public class LoginController {
         Utilisateur utilisateur;
 
         if (identifiant.isBlank()){
-            PopUpHandler.showError(this.view, "Veuillez entrer votre identifiant.");
+            PopUpHandler.showError(this.view, Lang.get("error.empty_username"));
         }
         else if (motDePasse.isBlank()){
-            PopUpHandler.showError(this.view, "Veuillez entrer votre mot de passe.");
+            PopUpHandler.showError(this.view, Lang.get("error.empty_password"));
         }
         else {
             utilisateur = authService.authenticate(identifiant, motDePasse);
@@ -48,7 +49,7 @@ public class LoginController {
                     mainFrame.showMemberDashboard(utilisateur);
                 }
             } else {
-                PopUpHandler.showError(this.view, "Identifiant ou mot de passe incorrect.");
+                PopUpHandler.showError(this.view, Lang.get("error.invalid_credentials"));
             }
         }
     }

@@ -30,6 +30,8 @@ public class UIConstants {
     public static final Color tableSelectionForegroundColor = Color.WHITE;
     public static final Color tableForegroundColor = new Color(31, 41, 55);
 
+    public static String tableFont = "Bahnschrift";
+    public static String titleFont = "Georgia";
     public static final String labelFont = "Segoe UI";
     public static final String textFieldFont = "Segoe UI";
     public static final Font buttonFont = new Font("Segoe UI", Font.BOLD, 17);

@@ -4,20 +4,22 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
-
-import java.awt.event.MouseEvent;
-import java.sql.Timestamp;
-
 import javax.swing.table.DefaultTableModel;
 
 import model.Activite;
+import util.Lang;
 import util.UIConstants;
+import view.components.CustomButton;
+import view.components.CustomLabel;
+import view.components.CustomSpinner;
+import view.components.CustomTable;
+import view.components.CustomTextField;
 
 public class GestionActivitePanel extends JPanel {
 
@@ -25,6 +27,7 @@ public class GestionActivitePanel extends JPanel {
     private JPanel container;
 
     private JTable activitesTable;
+
     private JButton ajouterButton;
     private JButton submitButton;
     private JButton retourButton;
@@ -35,23 +38,34 @@ public class GestionActivitePanel extends JPanel {
     private JTextField dateField;
     private JSpinner timeSpinner;
 
-    private String formMode = "ADD";
-    private int editedActiviteId = -1;
+    private JLabel titleLabel;
     private JLabel formTitle;
 
-    JMenuItem deleteItem;
-    JMenuItem editItem;
+    private JLabel nomLabel;
+    private JLabel descriptionLabel;
+    private JLabel capaciteMaxLabel;
+    private JLabel dateLabel;
+    private JLabel timeLabel;
+
+    private String formMode = "ADD";
+    private int editedActiviteId = -1;
+
+    private JMenuItem deleteItem;
+    private JMenuItem editItem;
 
     public GestionActivitePanel(ArrayList<Activite> activites) {
         cardLayout = new CardLayout();
         container = new JPanel(cardLayout);
 
         container.add(createListPage(activites), "list");
-        container.add(createactiviteForm(), "form");
+        container.add(createActiviteForm(), "form");
+
+        titleLabel = new CustomLabel(Lang.get("manage.activities"), 24);
 
         setLayout(new BorderLayout());
+        add(titleLabel, BorderLayout.NORTH);
         add(container, BorderLayout.CENTER);
-        
+
         setAlignmentX(Component.LEFT_ALIGNMENT);
     }
 
@@ -60,7 +74,11 @@ public class GestionActivitePanel extends JPanel {
         panel.setOpaque(false);
         panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 16, 0));
 
-        ajouterButton = new CustomButton("Ajouter", UIConstants.menuButtonBackgroundColor);
+        ajouterButton = new CustomButton(
+                Lang.get("button.add"),
+                UIConstants.menuButtonBackgroundColor
+        );
+
         ajouterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
@@ -73,47 +91,30 @@ public class GestionActivitePanel extends JPanel {
     }
 
     private JScrollPane createTablePanel(ArrayList<Activite> activites) {
-        String[] columns = {
-            "ID", "Nom", "Description", "Capacité maximale", "Date", "Heure"
-        };
+        DefaultTableModel model = new DefaultTableModel(
+                getTableData(activites),
+                getTableColumns()
+        );
 
-        Object[][] data = new Object[activites.size()][6];
-        for (int i = 0; i < activites.size(); i++) {
-            Activite activite = activites.get(i);
-            data[i] = new Object[] {
-                activite.getId(),
-                activite.getNom(),
-                activite.getDescription(),
-                activite.getCapaciteMax(),
-                activite.getHoraire().toLocalDate().toString(),
-                activite.getHoraire().toLocalTime().toString().substring(0, 5)
-            };
-        }
-
-        DefaultTableModel model = new DefaultTableModel(data, columns);
         activitesTable = new CustomTable(model);
 
         JScrollPane scrollPane = new JScrollPane(activitesTable);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(220, 224, 230), 1, true));
         scrollPane.setBackground(Color.WHITE);
 
-
         JPopupMenu popupMenu = new JPopupMenu();
 
-        deleteItem = new JMenuItem("Supprimer");
-        editItem = new JMenuItem("Modifier");
+        deleteItem = new JMenuItem(Lang.get("button.delete"));
+        editItem = new JMenuItem(Lang.get("button.edit"));
 
-        ImageIcon deleteIcon = new ImageIcon("./resources/images/delete.png");
-        ImageIcon editIcon = new ImageIcon("./resources/images/edit.png");
-
-        editItem.setIcon(editIcon);
-        deleteItem.setIcon(deleteIcon);
+        deleteItem.setIcon(new ImageIcon("./resources/images/delete.png"));
+        editItem.setIcon(new ImageIcon("./resources/images/edit.png"));
 
         popupMenu.add(editItem);
         popupMenu.add(deleteItem);
 
         activitesTable.addMouseListener(new MouseAdapter() {
-            
+
             public void mousePressed(MouseEvent e) {
                 if (e.isPopupTrigger()) showMenu(e);
             }
@@ -141,6 +142,36 @@ public class GestionActivitePanel extends JPanel {
         return scrollPane;
     }
 
+    private Object[] getTableColumns() {
+        return new Object[] {
+                "ID",
+                Lang.get("activity.name"),
+                Lang.get("activity.description"),
+                Lang.get("activity.capacity"),
+                Lang.get("activity.date"),
+                Lang.get("activity.time")
+        };
+    }
+
+    private Object[][] getTableData(ArrayList<Activite> activites) {
+        Object[][] data = new Object[activites.size()][6];
+
+        for (int i = 0; i < activites.size(); i++) {
+            Activite activite = activites.get(i);
+
+            data[i] = new Object[] {
+                    activite.getId(),
+                    activite.getNom(),
+                    activite.getDescription(),
+                    activite.getCapaciteMax(),
+                    activite.getHoraire().toLocalDate().toString(),
+                    activite.getHoraire().toLocalTime().toString().substring(0, 5)
+            };
+        }
+
+        return data;
+    }
+
     public void refreshTable(ArrayList<Activite> activites) {
         DefaultTableModel model = (DefaultTableModel) activitesTable.getModel();
 
@@ -148,23 +179,15 @@ public class GestionActivitePanel extends JPanel {
 
         for (Activite activite : activites) {
             model.addRow(new Object[] {
-                activite.getId(),
-                activite.getNom(),
-                activite.getDescription(),
-                activite.getCapaciteMax(),
-                activite.getHoraire().toLocalDate().toString(),
-                activite.getHoraire().toLocalTime().toString().substring(0, 5)
+                    activite.getId(),
+                    activite.getNom(),
+                    activite.getDescription(),
+                    activite.getCapaciteMax(),
+                    activite.getHoraire().toLocalDate().toString(),
+                    activite.getHoraire().toLocalTime().toString().substring(0, 5)
             });
         }
     }
-
-    public JMenuItem getDeleteItem() {
-        return deleteItem;
-    }
-
-    public JMenuItem getEditItem() {
-        return editItem;
-    } 
 
     private JPanel createListPage(ArrayList<Activite> activites) {
         JPanel panel = new JPanel();
@@ -181,9 +204,10 @@ public class GestionActivitePanel extends JPanel {
     public void showAddForm() {
         formMode = "ADD";
         editedActiviteId = -1;
-        formTitle.setText("Ajouter une activité");
-        submitButton.setText("Ajouter");
+
+        refreshUIText();
         clearForm();
+
         cardLayout.show(container, "form");
     }
 
@@ -191,32 +215,15 @@ public class GestionActivitePanel extends JPanel {
         formMode = "EDIT";
         editedActiviteId = activite.getId();
 
-        formTitle.setText("Modifier une activité");
-        submitButton.setText("Enregistrer");
-
         nomField.setText(activite.getNom());
         descriptionField.setText(activite.getDescription());
         capaciteMaxField.setText(String.valueOf(activite.getCapaciteMax()));
         dateField.setText(activite.getHoraire().toLocalDate().toString());
         timeSpinner.setValue((Date) Timestamp.valueOf(activite.getHoraire()));
 
+        refreshUIText();
+
         cardLayout.show(container, "form");
-    }
-
-    public boolean isEditMode() {
-        return formMode.equals("EDIT");
-    }
-
-    public int getEditedActiviteId() {
-        return editedActiviteId;
-    }
-
-    public void clearForm() {
-        nomField.setText("");
-        descriptionField.setText("");
-        capaciteMaxField.setText("");
-        dateField.setText("");
-        timeSpinner.setValue(new Date());
     }
 
     private JPanel createFormulaire() {
@@ -228,25 +235,35 @@ public class GestionActivitePanel extends JPanel {
         descriptionField = new CustomTextField();
         capaciteMaxField = new CustomTextField();
         dateField = new CustomTextField();
+
         timeSpinner = new CustomSpinner(new SpinnerDateModel());
         timeSpinner.setEditor(new JSpinner.DateEditor(timeSpinner, "HH:mm"));
 
-        form.add(new CustomLabel("Nom:"));
+        nomLabel = new CustomLabel(Lang.get("activity.name"));
+        descriptionLabel = new CustomLabel(Lang.get("activity.description"));
+        capaciteMaxLabel = new CustomLabel(Lang.get("activity.capacity"));
+        dateLabel = new CustomLabel(Lang.get("activity.date"));
+        timeLabel = new CustomLabel(Lang.get("activity.time"));
+
+        form.add(nomLabel);
         form.add(nomField);
 
-        form.add(new CustomLabel("Description:"));
+        form.add(descriptionLabel);
         form.add(descriptionField);
 
-        form.add(new CustomLabel("Capacité Maximale:"));
+        form.add(capaciteMaxLabel);
         form.add(capaciteMaxField);
 
-        form.add(new CustomLabel("Date:"));
+        form.add(dateLabel);
         form.add(dateField);
 
-        form.add(new CustomLabel("Horaire:"));
+        form.add(timeLabel);
         form.add(timeSpinner);
 
-        submitButton = new CustomButton("", UIConstants.emeraldGreen);
+        submitButton = new CustomButton(
+                Lang.get("button.create"),
+                UIConstants.emeraldGreen
+        );
 
         form.add(new JLabel());
         form.add(submitButton);
@@ -254,35 +271,20 @@ public class GestionActivitePanel extends JPanel {
         return form;
     }
 
-    public JButton getSubmitActiviteFormButton() {
-        return submitButton;
-    }
-
-    public JTable getActivitesTable() {
-        return activitesTable;
-    }
-
-    public int[] getSelectedActiviteIds() {
-        int[] rows = activitesTable.getSelectedRows();
-
-        int[] ids = new int[rows.length];
-
-        for (int i = 0; i < rows.length; i++) {
-            ids[i] = (int) activitesTable.getValueAt(rows[i], 0);
-        }
-
-        return ids;
-    }
-
-    private JPanel createactiviteForm() {
+    private JPanel createActiviteForm() {
         JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
         JPanel topBar = new JPanel();
         topBar.setLayout(new BoxLayout(topBar, BoxLayout.X_AXIS));
         topBar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 50));
         topBar.setBackground(Color.WHITE);
 
-        retourButton = new CustomButton("Retour", UIConstants.concreteGrey);
+        retourButton = new CustomButton(
+                Lang.get("button.back"),
+                UIConstants.concreteGrey
+        );
+
         retourButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
@@ -290,7 +292,11 @@ public class GestionActivitePanel extends JPanel {
             }
         });
 
-        formTitle = new CustomLabel("Ajouter un activite", UIConstants.primaryTextColor, 20);
+        formTitle = new CustomLabel(
+                Lang.get("activity.create"),
+                UIConstants.primaryTextColor,
+                20
+        );
 
         topBar.add(retourButton);
         topBar.add(Box.createHorizontalStrut(20));
@@ -302,10 +308,90 @@ public class GestionActivitePanel extends JPanel {
         return panel;
     }
 
+    public void refreshUIText() {
+        titleLabel.setText(Lang.get("manage.activities"));
+
+        ajouterButton.setText(Lang.get("button.add"));
+        retourButton.setText(Lang.get("button.back"));
+
+        formTitle.setText(
+                isEditMode()
+                        ? Lang.get("activity.edit")
+                        : Lang.get("activity.create")
+        );
+
+        submitButton.setText(
+                isEditMode()
+                        ? Lang.get("button.save")
+                        : Lang.get("button.create")
+        );
+
+        nomLabel.setText(Lang.get("activity.name"));
+        descriptionLabel.setText(Lang.get("activity.description"));
+        capaciteMaxLabel.setText(Lang.get("activity.capacity"));
+        dateLabel.setText(Lang.get("activity.date"));
+        timeLabel.setText(Lang.get("activity.time"));
+
+        deleteItem.setText(Lang.get("button.delete"));
+        editItem.setText(Lang.get("button.edit"));
+
+        refreshTableHeaders();
+
+        revalidate();
+        repaint();
+    }
+
+    private void refreshTableHeaders() {
+        DefaultTableModel model = (DefaultTableModel) activitesTable.getModel();
+        model.setColumnIdentifiers(getTableColumns());
+    }
+
+    public void clearForm() {
+        nomField.setText("");
+        descriptionField.setText("");
+        capaciteMaxField.setText("");
+        dateField.setText("");
+        timeSpinner.setValue(new Date());
+    }
+
+    public boolean isEditMode() {
+        return formMode.equals("EDIT");
+    }
+
+    public int getEditedActiviteId() {
+        return editedActiviteId;
+    }
+
+    public JButton getSubmitActiviteFormButton() {
+        return submitButton;
+    }
+
+    public JTable getActivitesTable() {
+        return activitesTable;
+    }
+
+    public JMenuItem getDeleteItem() {
+        return deleteItem;
+    }
+
+    public JMenuItem getEditItem() {
+        return editItem;
+    }
+
     public CardLayout getCardLayout() {
         return cardLayout;
     }
 
+    public int[] getSelectedActiviteIds() {
+        int[] rows = activitesTable.getSelectedRows();
+        int[] ids = new int[rows.length];
+
+        for (int i = 0; i < rows.length; i++) {
+            ids[i] = (int) activitesTable.getValueAt(rows[i], 0);
+        }
+
+        return ids;
+    }
 
     public String getNom(){
         return nomField.getText();

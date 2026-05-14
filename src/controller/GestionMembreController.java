@@ -7,8 +7,9 @@ import java.util.ArrayList;
 
 import dao.UtilisateurDAO;
 import model.Utilisateur;
+import util.Lang;
 import view.GestionMembrePanel;
-import view.PopUpHandler;
+import view.components.PopUpHandler;
 
 public class GestionMembreController {
 
@@ -56,38 +57,40 @@ public class GestionMembreController {
     }
 
     private boolean checkFields() {
-         if (view.getIdentifiant().isBlank()){
-            PopUpHandler.showError(view, "Veuillez entrer un identifiant.");
+
+        if (view.getIdentifiant().isBlank()){
+            PopUpHandler.showError(view, Lang.get("error.enter.username"));
             return false;
         }
         else if (view.getNom().isBlank()){
-            PopUpHandler.showError(view, "Veuillez entrer un nom.");
+            PopUpHandler.showError(view, Lang.get("error.enter.lastname"));
             return false;
         }
         else if (view.getPrenom().isBlank()){
-            PopUpHandler.showError(view, "Veuillez entrer un prénom.");
+            PopUpHandler.showError(view, Lang.get("error.enter.firstname"));
             return false;
         }
         else if (view.getDateNaissance().isBlank()){
-            PopUpHandler.showError(view, "Veuillez entrer une date de naissance.");
+            PopUpHandler.showError(view, Lang.get("error.enter.birthdate"));
             return false;
         }
         else if (view.getTelephone().isBlank()){
-            PopUpHandler.showError(view, "Veuillez entrer un numéro de téléphone.");
+            PopUpHandler.showError(view, Lang.get("error.enter.phone"));
             return false;
         }
         else if (view.getAdresse().isBlank()){
-            PopUpHandler.showError(view, "Veuillez entrer une adresse.");
+            PopUpHandler.showError(view, Lang.get("error.enter.address"));
             return false;
         }
         else if (view.getPoids().isBlank() || Double.parseDouble(view.getPoids()) <= 0){
-            PopUpHandler.showError(view, "Veuillez entrer un poids valide.");
+            PopUpHandler.showError(view, Lang.get("error.enter.valid.weight"));
             return false;
         }
         else if (view.getMotDePasse().isBlank()){
-            PopUpHandler.showError(view, "Veuillez entrer un mot de passe.");
+            PopUpHandler.showError(view, Lang.get("error.enter.password"));
             return false;
         }
+
         return true;
     }
 
@@ -106,17 +109,17 @@ public class GestionMembreController {
             );
 
             if (utilisateurDAO.getUtilisateurByLogin(view.getIdentifiant()) != null) {
-                PopUpHandler.showError(view, "Cet identifiant est déjà utilisé. Veuillez en choisir un autre.");
+                PopUpHandler.showError(view, Lang.get("error.username.exists"));
                 return;
             }
             boolean success = utilisateurDAO.addUtilisateur(nouveauMembre);
             if (success) {
                 
                 refreshTable();
-                PopUpHandler.showInfo(view, "Membre ajouté avec succès !");
+                PopUpHandler.showInfo(view, Lang.get("member.add.success"));
 
             } else {
-                PopUpHandler.showError(view, "Erreur lors de l'ajout du membre. Veuillez réessayer.");
+                PopUpHandler.showError(view, Lang.get("member.add.error"));
             }
         }
     }
@@ -126,12 +129,12 @@ public class GestionMembreController {
         if (ids.length == 0){
             return;
         }
-        if (PopUpHandler.showConfirm(view, "Voulez vous vraiment supprimer les membres sélectionnés ?")){
+        if (PopUpHandler.showConfirm(view, Lang.get("confirm.delete.members"))){
             for (int id: ids){
                 utilisateurDAO.deleteUtilisateurById(id);
             }
             refreshTable();
-            PopUpHandler.showInfo(view, "Membres supprimés avec succées!");
+            PopUpHandler.showInfo(view, Lang.get("members.delete.success"));
         }
         return;
     }
@@ -158,13 +161,13 @@ public class GestionMembreController {
                 "MEMBRE"
             );
             
-            if (PopUpHandler.showConfirm(view, "Voulez vous vraiment enregistrer les modifications ?")) {
+            if (PopUpHandler.showConfirm(view, Lang.get("confirm.save.changes"))) {
                 if (utilisateurDAO.updateUtilisateur(membreModifie)) {
                     refreshTable();
-                    PopUpHandler.showInfo(view, "Modifications enregistrés avec succés!");
+                    PopUpHandler.showInfo(view, Lang.get("member.update.success"));
                 }
                 else {
-                    PopUpHandler.showError(view, "Erreur lors de la modification, Veuillez réssayer.");
+                    PopUpHandler.showError(view, Lang.get("member.update.error"));
                 }
             }
         }

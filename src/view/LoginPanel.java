@@ -1,7 +1,5 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -16,7 +14,13 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import util.Lang;
+import util.LanguageHandler;
 import util.UIConstants;
+import view.components.CustomButton;
+import view.components.CustomLabel;
+import view.components.CustomPasswordField;
+import view.components.CustomTextField;
 
 public class LoginPanel extends JPanel {
 
@@ -45,9 +49,21 @@ public class LoginPanel extends JPanel {
 
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 
-        JLabel welcomeLabel = new CustomLabel("Bienvenue au", UIConstants.navy, "Georgia", Font.PLAIN, 31);
-        JLabel clubNameLabel = new CustomLabel("Club Sportif", UIConstants.primaryTextColor, "Georgia", Font.ITALIC, 37);
-        JLabel sloganLabel = new CustomLabel("Le sport pour tous", UIConstants.navy, "Georgia", Font.ITALIC, 25);
+        JLabel welcomeLabel = new CustomLabel(Lang.get("login.welcome"), UIConstants.navy, UIConstants.titleFont, Font.PLAIN, 31);
+        JLabel clubNameLabel = new CustomLabel(
+            Lang.get("app.title"), 
+            UIConstants.primaryTextColor, 
+            UIConstants.titleFont, 
+            LanguageHandler.getLocale().equals("ar") ? Font.PLAIN : Font.ITALIC,
+            37
+        );
+        JLabel sloganLabel = new CustomLabel(
+            Lang.get("login.description"), 
+            UIConstants.navy, 
+            UIConstants.titleFont, 
+            LanguageHandler.getLocale().equals("ar") ? Font.PLAIN : Font.ITALIC,
+            25
+        );
 
         welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         clubNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -68,14 +84,20 @@ public class LoginPanel extends JPanel {
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
         formPanel.setBackground(UIConstants.secondaryBackgroundColor);
 
-        JLabel titleLabel = new CustomLabel("Se connecter", UIConstants.navy, "Georgia", Font.ITALIC, 25);
-        JLabel identifiantLabel = new CustomLabel("IDENTIFIANT", UIConstants.secondaryTextColor, "Arial", Font.PLAIN, 13);
-        JLabel motDePasseLabel = new CustomLabel("MOT DE PASSE", UIConstants.secondaryTextColor, "Arial", Font.PLAIN, 13);
+        JLabel titleLabel = new CustomLabel(
+            Lang.get("signin"), 
+            UIConstants.navy, 
+            UIConstants.titleFont, 
+            LanguageHandler.getLocale().equals("ar") ? Font.PLAIN : Font.ITALIC, 
+            25
+        );
+        JLabel identifiantLabel = new CustomLabel(Lang.get("username"), UIConstants.secondaryTextColor, "Arial", Font.PLAIN, 13);
+        JLabel motDePasseLabel = new CustomLabel(Lang.get("password"), UIConstants.secondaryTextColor, "Arial", Font.PLAIN, 13);
 
         identifiantField = new CustomTextField();
         motDePasseField = new CustomPasswordField();
 
-        loginButton = new CustomButton("Se connecter", UIConstants.belizeBlue);
+        loginButton = new CustomButton(Lang.get("signin"), UIConstants.belizeBlue);
         loginButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, loginButton.getPreferredSize().height));
 
         formPanel.add(titleLabel);

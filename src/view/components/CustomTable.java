@@ -1,4 +1,4 @@
-package view;
+package view.components;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -19,7 +19,7 @@ public class CustomTable extends JTable{
     public CustomTable(TableModel model) {
         super(model);
         setRowHeight(40);
-        setFont(new Font("Bahnschrift", Font.PLAIN, 14));
+        setFont(new Font(UIConstants.tableFont, Font.PLAIN, 14));
         setShowGrid(false);
         setIntercellSpacing(new Dimension(0, 0));
         setFillsViewportHeight(true);
@@ -57,7 +57,7 @@ public class CustomTable extends JTable{
         JTableHeader header = getTableHeader();
         header.setBackground(UIConstants.navy);
         header.setForeground(Color.WHITE);
-        header.setFont(new Font("Bahnschrift", Font.PLAIN, 12));
+        header.setFont(new Font(UIConstants.tableFont, Font.PLAIN, 12));
         header.setPreferredSize(new Dimension(0, 44));
 
         header.setDefaultRenderer(new DefaultTableCellRenderer() {
@@ -70,7 +70,7 @@ public class CustomTable extends JTable{
 
                 lbl.setBackground(UIConstants.navy);
                 lbl.setForeground(new Color(200, 210, 225));
-                lbl.setFont(new Font("Bahnschrift", Font.PLAIN, 12));
+                lbl.setFont(new Font(UIConstants.tableFont, Font.PLAIN, 12));
                 lbl.setText(value != null ? value.toString().toUpperCase() : "");
                 lbl.setBorder(BorderFactory.createEmptyBorder(0, 16, 0, 16));
                 lbl.setOpaque(true);

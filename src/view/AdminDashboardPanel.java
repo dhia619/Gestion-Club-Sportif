@@ -9,13 +9,29 @@ import javax.swing.*;
 import controller.GestionActiviteController;
 import controller.GestionMembreController;
 import model.Utilisateur;
+import util.Lang;
+import util.LanguageHandler;
 import util.UIConstants;
+import view.components.CustomButton;
+import view.components.CustomLabel;
 
 public class AdminDashboardPanel extends JPanel {
 
     private JPanel contentPanel;
     private CardLayout cardLayout;
     JButton logoutButton;
+    JComboBox<String> languageBox;
+
+    private JLabel titleLabel;
+
+    private JButton dashboardButton;
+    private JButton membersButton;
+    private JButton activitiesButton;
+    private JButton registrationsButton;
+    private JButton monitoringButton;
+
+    private GestionMembreController membreController;
+    private GestionActiviteController activiteController;
 
     public AdminDashboardPanel(Utilisateur utilisateur) {
         setLayout(new BorderLayout());
@@ -26,17 +42,54 @@ public class AdminDashboardPanel extends JPanel {
     }
 
     private JPanel createTopBar() {
+
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setPreferredSize(new Dimension(0, 60));
         topBar.setBackground(Color.WHITE);
         topBar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        JLabel title = new CustomLabel("Dashboard Administrateur", UIConstants.navy, "Georgia", Font.ITALIC, 22);
+        titleLabel = new CustomLabel(
+                Lang.get("admin.dashboard.title"),
+                UIConstants.navy,
+                UIConstants.titleFont,
+                Font.PLAIN,
+                22
+        );
 
-        logoutButton = new CustomButton("Déconnexion", UIConstants.terracotta);
+        logoutButton = new CustomButton(
+                Lang.get("disconnect"),
+                UIConstants.terracotta
+        );
 
-        topBar.add(title, BorderLayout.WEST);
-        topBar.add(logoutButton, BorderLayout.EAST);
+        String[] languages = {
+                "English",
+                "Français",
+                "العربية"
+        };
+
+        ImageIcon languageIcon = new ImageIcon("./resources/images/worldwide.png");
+
+        languageBox = new JComboBox<>(languages);
+
+        languageBox.setPreferredSize(new Dimension(90, 35));
+
+        languageBox.setSelectedItem(switch (LanguageHandler.getLocale()) {
+            case "en" -> "English";
+            case "fr" -> "Français";
+            case "ar" -> "العربية";
+            default -> "Français";
+        });
+
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+
+        rightPanel.setOpaque(false);
+
+        rightPanel.add(new JLabel(languageIcon));
+        rightPanel.add(languageBox);
+        rightPanel.add(logoutButton);
+
+        topBar.add(titleLabel, BorderLayout.CENTER);
+        topBar.add(rightPanel, BorderLayout.EAST);
 
         return topBar;
     }
@@ -48,19 +101,26 @@ public class AdminDashboardPanel extends JPanel {
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setBorder(BorderFactory.createEmptyBorder(20, 15, 20, 15));
 
-        sidebar.add(createMenuButton("Dashboard", "dashboard"));
+
+        dashboardButton = createMenuButton(Lang.get("dashboard"), "dashboard");
+        membersButton = createMenuButton(Lang.get("members"), "membres");
+        activitiesButton = createMenuButton(Lang.get("activities"), "activites");
+        registrationsButton = createMenuButton(Lang.get("registrations"), "inscriptions");
+        monitoringButton = createMenuButton(Lang.get("monitoring"), "suivi");
+
+        sidebar.add(dashboardButton);
         sidebar.add(Box.createVerticalStrut(10));
 
-        sidebar.add(createMenuButton("Membres", "membres"));
+        sidebar.add(membersButton);
         sidebar.add(Box.createVerticalStrut(10));
 
-        sidebar.add(createMenuButton("Activités", "activites"));
+        sidebar.add(activitiesButton);
         sidebar.add(Box.createVerticalStrut(10));
 
-        sidebar.add(createMenuButton("Inscriptions", "inscriptions"));
+        sidebar.add(registrationsButton);
         sidebar.add(Box.createVerticalStrut(10));
 
-        sidebar.add(createMenuButton("Suivi", "suivi"));
+        sidebar.add(monitoringButton);
 
         return sidebar;
     }
@@ -94,34 +154,34 @@ public class AdminDashboardPanel extends JPanel {
     }
 
     private JPanel createDashboardPage() {
-        JPanel panel = createBasePage("Vue générale");
+        JPanel panel = createBasePage();
 
         return panel;
     }
 
     private JPanel gestionMembresPage() {
-        JPanel panel = createBasePage("Gestion des membres");
-        GestionMembreController controller = new GestionMembreController();
-        panel.add(controller.getView());
+        JPanel panel = createBasePage();
+        membreController = new GestionMembreController();
+        panel.add(membreController.getView());
         return panel;
     }
 
     private JPanel gestionActivitesPage() {
-        JPanel panel = createBasePage("Gestion des activités");
-        GestionActiviteController controller = new GestionActiviteController();
-        panel.add(controller.getView());
+        JPanel panel = createBasePage();
+        activiteController = new GestionActiviteController();
+        panel.add(activiteController.getView());
 
         return panel;
     }
 
     private JPanel gestionInscriptionsPage() {
-        JPanel panel = createBasePage("Gestion des inscriptions");
+        JPanel panel = createBasePage();
 
         return panel;
     }
 
     private JPanel gestionSuiviPage() {
-        JPanel panel = createBasePage("Suivi et gestion");
+        JPanel panel = createBasePage();
 
         JLabel complete = new CustomLabel("Activités complètes : Musculation, Natation");
         JLabel active = new CustomLabel("Membres les plus actifs : Sami, Lina");
@@ -132,41 +192,40 @@ public class AdminDashboardPanel extends JPanel {
         return panel;
     }
 
-    private JPanel createBasePage(String titleText) {
+    private JPanel createBasePage() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(UIConstants.secondaryBackgroundColor);
         panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
-        JLabel title = new CustomLabel(titleText, 24);
-        title.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        panel.add(title);
         panel.add(Box.createVerticalStrut(25));
 
         return panel;
     }
 
-    private JPanel createStatCard(String title, String value) {
-        JPanel card = new JPanel();
-        card.setMaximumSize(new Dimension(300, 90));
-        card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-        card.setLayout(new BorderLayout());
-
-        JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(new Font("Arial", Font.PLAIN, 15));
-
-        JLabel valueLabel = new JLabel(value);
-        valueLabel.setFont(new Font("Arial", Font.BOLD, 28));
-
-        card.add(titleLabel, BorderLayout.NORTH);
-        card.add(valueLabel, BorderLayout.CENTER);
-
-        return card;
-    }
-
     public JButton getLogoutButton() {
         return logoutButton;
     }
+
+    public JComboBox<String> getLanguageComboBox() {
+        return languageBox;
+    }
+
+    public void refreshUIText() {
+        titleLabel.setText(Lang.get("admin.dashboard.title"));
+        logoutButton.setText(Lang.get("disconnect"));
+
+        dashboardButton.setText(Lang.get("dashboard"));
+        membersButton.setText(Lang.get("members"));
+        activitiesButton.setText(Lang.get("activities"));
+        registrationsButton.setText(Lang.get("registrations"));
+        monitoringButton.setText(Lang.get("monitoring"));
+
+        membreController.getView().refreshUIText();
+        activiteController.getView().refreshUIText();
+
+        revalidate();
+        repaint();
+    }
+
 }
