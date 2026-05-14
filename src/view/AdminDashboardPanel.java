@@ -212,7 +212,10 @@ public class AdminDashboardPanel extends JPanel {
     }
 
     public void refreshUIText() {
+        
+        titleLabel.setFont(new Font(LanguageHandler.getTitleFont(), Font.PLAIN, 22));
         titleLabel.setText(Lang.get("admin.dashboard.title"));
+
         logoutButton.setText(Lang.get("disconnect"));
 
         dashboardButton.setText(Lang.get("dashboard"));

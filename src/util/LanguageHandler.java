@@ -37,6 +37,10 @@ public class LanguageHandler {
             UIConstants.titleFont = "Georgia";
             UIConstants.tableFont = "Bahnschrift";
         }
+
+        System.out.println("Locale set to: " + language);
+        System.out.println("Title font set to: " + UIConstants.titleFont);
+        System.out.println("Table font set to: " + UIConstants.tableFont);
     }
 
     public static void saveLanguagePreference(String language) {
@@ -57,5 +61,9 @@ public class LanguageHandler {
 
     public static String getLocale() {
         return locale;
+    }
+
+    public static String getTitleFont() {
+        return getLocale().equals("ar") ? "Dubai" : "Georgia";
     }
 }
