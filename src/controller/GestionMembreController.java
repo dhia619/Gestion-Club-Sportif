@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import dao.UtilisateurDAO;
 import model.Utilisateur;
+import util.HashUtil;
 import util.Lang;
 import view.GestionMembrePanel;
 import view.components.PopUpHandler;
@@ -104,7 +105,7 @@ public class GestionMembreController {
                 view.getAdresse(),
                 Double.parseDouble(view.getPoids()),
                 view.getIdentifiant(),
-                view.getMotDePasse(),
+                HashUtil.hash(view.getMotDePasse()),
                 "MEMBRE"
             );
 

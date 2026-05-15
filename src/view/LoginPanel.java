@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -18,15 +19,16 @@ import util.Lang;
 import util.LanguageHandler;
 import util.UIConstants;
 import view.components.CustomButton;
+import view.components.CustomCheckBox;
 import view.components.CustomLabel;
 import view.components.CustomPasswordField;
 import view.components.CustomTextField;
-
 public class LoginPanel extends JPanel {
 
-    JTextField identifiantField;
-    JPasswordField motDePasseField;
-    JButton loginButton;
+    private JTextField identifiantField;
+    private JPasswordField motDePasseField;
+    private JButton loginButton;
+    private JCheckBox rememberMeCheckBox;
 
     public LoginPanel() {
         this.setLayout(new GridLayout(1, 2));
@@ -100,6 +102,8 @@ public class LoginPanel extends JPanel {
         loginButton = new CustomButton(Lang.get("signin"), UIConstants.belizeBlue);
         loginButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, loginButton.getPreferredSize().height));
 
+        rememberMeCheckBox = new CustomCheckBox(Lang.get("remember.me"));
+
         formPanel.add(titleLabel);
         formPanel.add(Box.createVerticalStrut(25));
 
@@ -111,6 +115,9 @@ public class LoginPanel extends JPanel {
         formPanel.add(motDePasseLabel);
         formPanel.add(Box.createVerticalStrut(5));
         formPanel.add(motDePasseField);
+        formPanel.add(Box.createVerticalStrut(20));
+
+        formPanel.add(rememberMeCheckBox);
         formPanel.add(Box.createVerticalStrut(20));
 
         formPanel.add(loginButton);
@@ -129,5 +136,9 @@ public class LoginPanel extends JPanel {
 
     public JButton getLoginButton() {
         return loginButton;
+    }
+
+    public boolean isRememberMeSelected() {
+        return rememberMeCheckBox.isSelected();
     }
 }

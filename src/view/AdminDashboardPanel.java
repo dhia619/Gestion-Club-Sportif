@@ -33,12 +33,16 @@ public class AdminDashboardPanel extends JPanel {
     private GestionMembreController membreController;
     private GestionActiviteController activiteController;
 
+    private Utilisateur utilisateur;
+
     public AdminDashboardPanel(Utilisateur utilisateur) {
         setLayout(new BorderLayout());
 
         add(createTopBar(), BorderLayout.NORTH);
         add(createSidebar(), BorderLayout.WEST);
         add(createContentPanel(), BorderLayout.CENTER);
+
+        this.utilisateur = utilisateur;
     }
 
     private JPanel createTopBar() {
@@ -209,6 +213,10 @@ public class AdminDashboardPanel extends JPanel {
 
     public JComboBox<String> getLanguageComboBox() {
         return languageBox;
+    }
+
+    public Utilisateur getUtilisateur() {
+        return utilisateur;
     }
 
     public void refreshUIText() {

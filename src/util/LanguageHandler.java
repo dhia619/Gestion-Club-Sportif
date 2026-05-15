@@ -1,69 +1,47 @@
 package util;
 
-import java.nio.file.*;
 import java.util.Locale;
+import java.util.Properties;
 
 public class LanguageHandler {
 
-    private static Path path = Paths.get("./language.txt");
-
+    private static Properties config;
     private static String locale = "fr";
 
     public static void init() {
-
-        try {
-
-            if (Files.exists(path)) {
-
-                locale = Files.readString(path).trim();
-
-                setLocale(locale);
-            }
-
-        } catch (Exception e) {
-
-            System.out.println("Error while reading config file: " + e.getMessage());
-        }
+        config = ConfigurationFileHandler.getConfig();
+        locale = config.getProperty("locale", "fr");
+        setLocale(locale);
     }
 
     public static void setLocale(String language) {
         locale = language;
         Lang.setLocale(new Locale(language));
+
         if (locale.equals("ar")) {
             UIConstants.titleFont = "Dubai";
             UIConstants.tableFont = "Dubai";
-        }
-        else {
+        } else {
             UIConstants.titleFont = "Georgia";
             UIConstants.tableFont = "Bahnschrift";
         }
-
-        System.out.println("Locale set to: " + language);
-        System.out.println("Title font set to: " + UIConstants.titleFont);
-        System.out.println("Table font set to: " + UIConstants.tableFont);
     }
 
     public static void saveLanguagePreference(String language) {
-
-        try {
-
-            if (!Files.exists(path)) {
-                Files.createFile(path);
-            }
-
-            Files.writeString(path, language);
-
-        } catch (Exception e){
-
-            System.out.println("Error when saving file: " + e.getMessage());
-        }
+        setLocale(language);
+        config.setProperty("locale", language);
+        ConfigurationFileHandler.saveConfig(config);
     }
 
     public static String getLocale() {
         return locale;
     }
 
+    public static boolean isArabic() {
+        return locale.equals("ar");
+    }
+
     public static String getTitleFont() {
-        return getLocale().equals("ar") ? "Dubai" : "Georgia";
+        return isArabic() ? "Dubai" : "Georgia";
     }
 }

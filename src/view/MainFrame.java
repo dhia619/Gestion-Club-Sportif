@@ -1,10 +1,14 @@
 package view;
 
+import java.util.Properties;
+
 import javax.swing.JFrame;
 
 import controller.AdminDashboardController;
 import controller.LoginController;
 import model.Utilisateur;
+import service.AuthService;
+import util.ConfigurationFileHandler;
 
 public class MainFrame extends JFrame{
 
@@ -13,7 +17,26 @@ public class MainFrame extends JFrame{
         this.setSize(width, height);
         this.setTitle(title);
         
-        showLoginPanel();
+        Properties config = ConfigurationFileHandler.getConfig();
+
+        AuthService authService = new AuthService();
+
+
+        if (config.getProperty("remember_me").equals("true")) {
+            String token = config.getProperty("remember_me_token");
+            Utilisateur utilisateur = authService.authenticateByRememberToken(token);
+            if (utilisateur != null) {
+                if (utilisateur.getRole().equals("ADMIN")) {
+                    showAdminDashboard(utilisateur);
+                } else {
+                    showMemberDashboard(utilisateur);
+                }
+            } else {
+                showLoginPanel();
+            }
+        } else {
+            showLoginPanel();
+        }
 
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

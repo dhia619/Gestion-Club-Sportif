@@ -2,9 +2,12 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Properties;
+import java.util.UUID;
 
 import model.Utilisateur;
 import service.AuthService;
+import util.ConfigurationFileHandler;
 import util.Lang;
 import view.LoginPanel;
 import view.MainFrame;
@@ -43,6 +46,16 @@ public class LoginController {
         else {
             utilisateur = authService.authenticate(identifiant, motDePasse);
             if (utilisateur != null){
+
+                Properties config = ConfigurationFileHandler.getConfig();
+                if (view.isRememberMeSelected()) {
+                    authService.rememberUser(utilisateur, config);
+                } else {
+                    config.setProperty("remember_me", "false");
+                    config.remove("remember_me_token");
+                }
+                ConfigurationFileHandler.saveConfig(config);
+
                 if (utilisateur.getRole().equals("ADMIN")){
                     mainFrame.showAdminDashboard(utilisateur);
                 } else {

@@ -159,6 +159,55 @@ public class UtilisateurDAO {
         return success;
     }
 
+    public Utilisateur getUtilisateurByRememberMeToken(String token) {
+        Connection connection = DatabaseConnection.getConnection();
+        Utilisateur utilisateur = null;
+        try {
+            String query = "SELECT * FROM utilisateurs WHERE remember_me_token = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, token);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                utilisateur = mapResultSetToUtilisateur(resultSet);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching utilisateur by remember me token: " + e.getMessage());
+        } finally {
+            try {
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                System.out.println("Error closing connection: " + e.getMessage());
+            }
+        }
+        return utilisateur;
+    }
+
+    public boolean updateRememberMeToken(int userId, String token) {
+        Connection connection = DatabaseConnection.getConnection();
+        boolean success = false;
+        try {
+            String query = "UPDATE utilisateurs SET remember_me_token = ? where id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, token);
+            statement.setInt(2, userId);
+            int rowsUpdated = statement.executeUpdate();
+            success = rowsUpdated > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating utilisateur: " + e.getMessage());
+        } finally {
+            try {
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                System.out.println("Error closing connection: " + e.getMessage());
+            }
+        }
+        return success;
+    }
+
+    public boolean clearRememberMeToken(int userId) {
+        return updateRememberMeToken(userId, null);
+    }
+
     private Utilisateur mapResultSetToUtilisateur(ResultSet resultSet) throws SQLException {
         return new Utilisateur(
             resultSet.getInt("id"),

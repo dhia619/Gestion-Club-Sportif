@@ -13,7 +13,8 @@ public class DatabaseSchema {
         "poids REAL," +
         "login TEXT UNIQUE NOT NULL," +
         "mot_de_passe TEXT NOT NULL," +
-        "role TEXT NOT NULL" +
+        "role TEXT NOT NULL," +
+        "remember_me_token TEXT" +
         ");";
 
     public static final String CREATE_ACTIVITES =

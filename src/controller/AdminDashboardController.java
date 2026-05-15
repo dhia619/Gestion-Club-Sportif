@@ -3,7 +3,10 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
+import java.util.Properties;
 
+import service.AuthService;
+import util.ConfigurationFileHandler;
 import util.LanguageHandler;
 import view.AdminDashboardPanel;
 import view.MainFrame;
@@ -18,6 +21,12 @@ public class AdminDashboardController {
         this.view.getLogoutButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
+                AuthService authService = new AuthService();
+                authService.logout(view.getUtilisateur());
+                Properties config = ConfigurationFileHandler.getConfig();
+                config.setProperty("remember_me", "false");
+                config.remove("remember_me_token");
+                ConfigurationFileHandler.saveConfig(config);
                 mainFrame.showLoginPanel();
             }
         });

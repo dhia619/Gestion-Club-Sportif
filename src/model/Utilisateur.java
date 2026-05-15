@@ -13,6 +13,7 @@ public class Utilisateur {
     private String login;
     private String motDePasse;
     private String role;
+    private String rememberMeToken;
 
     public Utilisateur(
         int id,
@@ -100,6 +101,10 @@ public class Utilisateur {
         return this.role;
     }
 
+    public String getRememberMeToken() {
+        return rememberMeToken;
+    }
+
     public void setNom(String nom){
         this.nom = nom;
     }
@@ -134,5 +139,9 @@ public class Utilisateur {
 
     public void setRole(String role){
         this.role = role;
+    }
+
+    public void setRememberMeToken(String rememberMeToken) {
+        this.rememberMeToken = rememberMeToken;
     }
 }
