@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import javax.swing.JFrame;
 
-import controller.AdminDashboardController;
+import controller.DashboardController;
 import controller.ChangePasswordController;
 import controller.LoginController;
 import model.Utilisateur;
@@ -49,14 +49,16 @@ public class MainFrame extends JFrame{
 
     public void showAdminDashboard(Utilisateur utilisateur) {
         AdminDashboardPanel adminDashboardPanel = new AdminDashboardPanel(utilisateur);
-        setContentPane(adminDashboardPanel);
-        new AdminDashboardController(adminDashboardPanel, this);
+        this.setContentPane(adminDashboardPanel);
+        new DashboardController(adminDashboardPanel, this);
         revalidate();
         repaint();
     }
 
     public void showMemberDashboard(Utilisateur utilisateur) {
-        setContentPane(new MembreDashboardPanel(utilisateur));
+        MembreDashboardPanel membreDashboardPanel = new MembreDashboardPanel(utilisateur);
+        new DashboardController(membreDashboardPanel, this);
+        this.setContentPane(membreDashboardPanel);
         revalidate();
         repaint();
     }

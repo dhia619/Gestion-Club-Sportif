@@ -8,14 +8,14 @@ import java.util.Properties;
 import service.AuthService;
 import util.ConfigurationFileHandler;
 import util.LanguageHandler;
-import view.AdminDashboardPanel;
+import view.components.DashboardLayoutPanel;
 import view.MainFrame;
 
-public class AdminDashboardController {
+public class DashboardController {
 
-    private AdminDashboardPanel view;
+    private DashboardLayoutPanel view;
 
-    public AdminDashboardController(AdminDashboardPanel view, MainFrame mainFrame) {
+    public DashboardController(DashboardLayoutPanel view, MainFrame mainFrame) {
         this.view = view;
 
         this.view.getLogoutButton().addActionListener(new ActionListener() {
@@ -31,11 +31,11 @@ public class AdminDashboardController {
             }
         });
 
-        this.view.getLanguageComboBox().addActionListener(new ActionListener() {
+        this.view.getLanguageBox().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                String selected = (String) view.getLanguageComboBox().getSelectedItem();
+                String selected = (String) view.getLanguageBox().getSelectedItem();
                 Locale locale;
 
                 switch (selected) {
