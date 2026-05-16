@@ -6,6 +6,8 @@ import java.util.UUID;
 import dao.UtilisateurDAO;
 import model.Utilisateur;
 import util.HashUtil;
+import util.Lang;
+import view.components.PopUpHandler;
 
 public class AuthService {
 
@@ -32,7 +34,7 @@ public class AuthService {
         utilisateurDAO.updateRememberMeToken(utilisateur.getId(), hashedToken);
 
         config.setProperty("remember_me", "true");
-        config.setProperty("remember_me_token", token);
+        config.setProperty("remember_me_token", hashedToken);
     }
 
     public Utilisateur authenticateByRememberToken(String token) {
@@ -41,10 +43,20 @@ public class AuthService {
             return null;
         }
 
-        return utilisateurDAO.getUtilisateurByRememberMeToken(HashUtil.hash(token));
+        return utilisateurDAO.getUtilisateurByRememberMeToken(token);
     }
 
     public void logout(Utilisateur utilisateur) {
         utilisateurDAO.clearRememberMeToken(utilisateur.getId());
+    }
+
+    public ServiceResult changePassword(Utilisateur utilisateur, String oldPassword, String newPassword) {
+        if (!HashUtil.hash(oldPassword).equals(utilisateur.getMotDePasse())) {
+            return new ServiceResult(false, Lang.get("error.wrong.old.password"));
+        }
+        utilisateur.setMotDePasse(HashUtil.hash(newPassword));
+        utilisateur.setFirstLogin(false);
+        utilisateurDAO.updateUtilisateur(utilisateur);
+        return new ServiceResult(true, null);
     }
 }

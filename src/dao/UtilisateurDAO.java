@@ -61,7 +61,7 @@ public class UtilisateurDAO {
         Connection connection = DatabaseConnection.getConnection();
         boolean success = false;
         try {
-            String query = "INSERT INTO utilisateurs (nom, prenom, date_naissance, telephone, adresse, poids, login, mot_de_passe, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO utilisateurs (nom, prenom, date_naissance, telephone, adresse, poids, login, mot_de_passe, role, first_login) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, utilisateur.getNom());
             statement.setString(2, utilisateur.getPrenom());
@@ -72,6 +72,7 @@ public class UtilisateurDAO {
             statement.setString(7, utilisateur.getLogin());
             statement.setString(8, utilisateur.getMotDePasse());
             statement.setString(9, utilisateur.getRole());
+            statement.setBoolean(10, utilisateur.getFirstLogin());
             int rowsInserted = statement.executeUpdate();
             success = rowsInserted > 0;
         } catch (SQLException e) {
@@ -113,7 +114,7 @@ public class UtilisateurDAO {
         Connection connection = DatabaseConnection.getConnection();
         boolean success = false;
         try {
-            String query = "UPDATE utilisateurs SET nom = ?, prenom = ?, date_naissance = ?, telephone = ?, adresse = ?, poids = ?, login = ?, mot_de_passe = ? WHERE id = ?";
+            String query = "UPDATE utilisateurs SET nom = ?, prenom = ?, date_naissance = ?, telephone = ?, adresse = ?, poids = ?, login = ?, mot_de_passe = ?, first_login = ? WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, utilisateur.getNom());
             statement.setString(2, utilisateur.getPrenom());
@@ -123,7 +124,8 @@ public class UtilisateurDAO {
             statement.setDouble(6, utilisateur.getPoids());
             statement.setString(7, utilisateur.getLogin());
             statement.setString(8, utilisateur.getMotDePasse());
-            statement.setInt(9, utilisateur.getId());
+            statement.setBoolean(9, utilisateur.getFirstLogin());
+            statement.setInt(10, utilisateur.getId());
             int rowsUpdated = statement.executeUpdate();
             success = rowsUpdated > 0;
         } catch (SQLException e) {
@@ -219,7 +221,8 @@ public class UtilisateurDAO {
             resultSet.getDouble("poids"),
             resultSet.getString("login"),
             resultSet.getString("mot_de_passe"),
-            resultSet.getString("role")
+            resultSet.getString("role"),
+            resultSet.getBoolean("first_login")
         );
     }
 }

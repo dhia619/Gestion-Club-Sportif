@@ -3,7 +3,6 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Properties;
-import java.util.UUID;
 
 import model.Utilisateur;
 import service.AuthService;
@@ -59,7 +58,11 @@ public class LoginController {
                 if (utilisateur.getRole().equals("ADMIN")){
                     mainFrame.showAdminDashboard(utilisateur);
                 } else {
-                    mainFrame.showMemberDashboard(utilisateur);
+                    if (utilisateur.getFirstLogin()) {
+                        mainFrame.showChangePasswordPanel(utilisateur);
+                    } else {
+                        mainFrame.showMemberDashboard(utilisateur);
+                    }
                 }
             } else {
                 PopUpHandler.showError(this.view, Lang.get("error.invalid_credentials"));

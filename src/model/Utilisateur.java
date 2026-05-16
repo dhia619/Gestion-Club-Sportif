@@ -14,6 +14,7 @@ public class Utilisateur {
     private String motDePasse;
     private String role;
     private String rememberMeToken;
+    private boolean firstLogin;
 
     public Utilisateur(
         int id,
@@ -25,7 +26,8 @@ public class Utilisateur {
         double poids, 
         String login, 
         String motDePasse,
-        String role
+        String role,
+        boolean firstLogin
     ) {
         this.id = id;
         this.nom = nom;
@@ -37,6 +39,7 @@ public class Utilisateur {
         this.login = login;
         this.motDePasse = motDePasse;
         this.role = role;
+        this.firstLogin = firstLogin;
     }
 
     public Utilisateur(
@@ -48,7 +51,8 @@ public class Utilisateur {
         double poids, 
         String login, 
         String motDePasse,
-        String role
+        String role,
+        boolean firstLogin
     ) {
         this.nom = nom;
         this.prenom = prenom;
@@ -59,6 +63,7 @@ public class Utilisateur {
         this.login = login;
         this.motDePasse = motDePasse;
         this.role = role;
+        this.firstLogin = firstLogin;
     }
 
     public int getId(){
@@ -102,7 +107,11 @@ public class Utilisateur {
     }
 
     public String getRememberMeToken() {
-        return rememberMeToken;
+        return this.rememberMeToken;
+    }
+
+    public boolean getFirstLogin() {
+        return this.firstLogin;
     }
 
     public void setNom(String nom){
@@ -143,5 +152,9 @@ public class Utilisateur {
 
     public void setRememberMeToken(String rememberMeToken) {
         this.rememberMeToken = rememberMeToken;
+    }
+
+    public void setFirstLogin(boolean firstLogin) {
+        this.firstLogin = firstLogin;
     }
 }

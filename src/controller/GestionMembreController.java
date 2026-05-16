@@ -87,10 +87,6 @@ public class GestionMembreController {
             PopUpHandler.showError(view, Lang.get("error.enter.valid.weight"));
             return false;
         }
-        else if (view.getMotDePasse().isBlank()){
-            PopUpHandler.showError(view, Lang.get("error.enter.password"));
-            return false;
-        }
 
         return true;
     }
@@ -106,7 +102,8 @@ public class GestionMembreController {
                 Double.parseDouble(view.getPoids()),
                 view.getIdentifiant(),
                 HashUtil.hash(view.getMotDePasse()),
-                "MEMBRE"
+                "MEMBRE",
+                true
             );
 
             if (utilisateurDAO.getUtilisateurByLogin(view.getIdentifiant()) != null) {
@@ -149,6 +146,13 @@ public class GestionMembreController {
     
     public void modifierMembre(){
         if (checkFields()) {
+            Utilisateur ancienMembre = utilisateurDAO.getUtilisateurById(membreModifieId);
+            String passwordToSave;
+            if (view.getMotDePasse().isBlank()) {
+                passwordToSave = ancienMembre.getMotDePasse();
+            } else {
+                passwordToSave = HashUtil.hash(view.getMotDePasse());
+            }
             Utilisateur membreModifie = new Utilisateur(
                 membreModifieId,
                 view.getNom(),
@@ -158,8 +162,9 @@ public class GestionMembreController {
                 view.getAdresse(),
                 Double.parseDouble(view.getPoids()),
                 view.getIdentifiant(),
-                view.getMotDePasse(),
-                "MEMBRE"
+                passwordToSave,
+                "MEMBRE",
+                ancienMembre.getFirstLogin()
             );
             
             if (PopUpHandler.showConfirm(view, Lang.get("confirm.save.changes"))) {

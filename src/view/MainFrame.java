@@ -5,6 +5,7 @@ import java.util.Properties;
 import javax.swing.JFrame;
 
 import controller.AdminDashboardController;
+import controller.ChangePasswordController;
 import controller.LoginController;
 import model.Utilisateur;
 import service.AuthService;
@@ -29,7 +30,11 @@ public class MainFrame extends JFrame{
                 if (utilisateur.getRole().equals("ADMIN")) {
                     showAdminDashboard(utilisateur);
                 } else {
-                    showMemberDashboard(utilisateur);
+                    if (utilisateur.getFirstLogin()) {
+                        showChangePasswordPanel(utilisateur);
+                    } else {
+                        showMemberDashboard(utilisateur);
+                    }
                 }
             } else {
                 showLoginPanel();
@@ -60,6 +65,14 @@ public class MainFrame extends JFrame{
         LoginPanel loginPanel = new LoginPanel();
         new LoginController(loginPanel, this);
         this.setContentPane(loginPanel);
+        revalidate();
+        repaint();
+    }
+
+    public void showChangePasswordPanel(Utilisateur utilisateur) {
+        ChangePasswordPanel changePasswordPanel = new ChangePasswordPanel(utilisateur);
+        new ChangePasswordController(this, changePasswordPanel);
+        this.setContentPane(changePasswordPanel);
         revalidate();
         repaint();
     }

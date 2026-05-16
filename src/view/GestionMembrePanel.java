@@ -234,7 +234,6 @@ public class GestionMembrePanel extends JPanel {
         telField.setText(membre.getTelephone());
         adresseField.setText(membre.getAdresse());
         poidsField.setText(String.valueOf(membre.getPoids()));
-        passwordField.setText(membre.getMotDePasse());
 
         refreshUIText();
 
@@ -288,10 +287,7 @@ public class GestionMembrePanel extends JPanel {
         form.add(passwordLabel);
         form.add(passwordField);
 
-        submitButton = new CustomButton(
-                Lang.get("button.create"),
-                UIConstants.emeraldGreen
-        );
+        submitButton = new CustomButton(Lang.get("button.create"),UIConstants.emeraldGreen);
 
         form.add(new JLabel());
         form.add(submitButton);

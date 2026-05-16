@@ -14,7 +14,8 @@ public class DatabaseSchema {
         "login TEXT UNIQUE NOT NULL," +
         "mot_de_passe TEXT NOT NULL," +
         "role TEXT NOT NULL," +
-        "remember_me_token TEXT" +
+        "remember_me_token TEXT," +
+        "first_login  BOOLEAN" +
         ");";
 
     public static final String CREATE_ACTIVITES =
