@@ -8,6 +8,7 @@ import dao.InscriptionDAO;
 import model.Activite;
 import model.ActiviteDisponibleRow;
 import model.Inscription;
+import model.InscriptionRow;
 import model.Utilisateur;
 import model.enums.StatutActivite;
 import model.enums.StatutInscription;
@@ -17,12 +18,11 @@ public class InscriptionService {
     
     private InscriptionDAO inscriptionDAO = new InscriptionDAO();
     private ActiviteDAO activiteDAO = new ActiviteDAO();
-    private ArrayList<Activite> activites;
     private ArrayList<ActiviteDisponibleRow> activitesDisponibles;
 
     public ArrayList<ActiviteDisponibleRow> getActivitesDisponibles(int utilisateurId) {
         activitesDisponibles = new ArrayList<ActiviteDisponibleRow>();
-        activites = activiteDAO.findAll();
+        ArrayList<Activite> activites = activiteDAO.findAll();
         for (Activite activite : activites) {
             ArrayList<Inscription> inscriptions = inscriptionDAO.findByActivite(activite.getId());
             boolean dejaInscri = false;
@@ -33,11 +33,10 @@ public class InscriptionService {
             }
             int placeRestants = activite.getCapaciteMax() - inscriptions.size();
             String statut = "-";
-            if (dejaInscri) {
-                statut = StatutActivite.DEJA_INSCRIT.toString();
+            if (dejaInscri || placeRestants <= 0) {
+                continue;
             } else {
-                if (placeRestants <= 0) continue;
-                else statut = StatutActivite.DISPONIBLE.toString();
+                statut = StatutActivite.DISPONIBLE.toString();
             }
             activitesDisponibles.add(new ActiviteDisponibleRow(activite, placeRestants, Lang.get(statut)));
         }
@@ -59,6 +58,22 @@ public class InscriptionService {
             }
         }
         return new ServiceResult(true, Lang.get("success.request.register.activity"));
+    }
+
+    public ArrayList<InscriptionRow> getMesInscriptions(int utilisateurId) {
+        ArrayList<InscriptionRow> inscriptionRows = new ArrayList<InscriptionRow>();
+        ArrayList<Inscription> inscriptions = inscriptionDAO.findByMembre(utilisateurId);
+        for (Inscription inscription : inscriptions) {
+            inscriptionRows.add(new InscriptionRow(inscription, inscription.getActivite()));
+        }
+        return inscriptionRows;
+    }
+
+    public ServiceResult annuler(int inscriptionId) {
+        if (!inscriptionDAO.delete(inscriptionId)) {
+            return new ServiceResult(false, Lang.get("error.cancel.registration"));
+        }
+        return new ServiceResult(true, Lang.get("success.cancel.registration"));
     }
 
 }

@@ -6,6 +6,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import controller.ConsulterActiviteController;
+import controller.ConsulterInscriptionController;
 import model.Utilisateur;
 import util.Lang;
 import util.LanguageHandler;
@@ -18,6 +19,7 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
     private JButton registrationsButton;
     private JButton profileButton;
     private ConsulterActiviteController consulterActiviteController;
+    private ConsulterInscriptionController consulterInscriptionController;
     private Utilisateur utilisateur;
     
     public MembreDashboardPanel(Utilisateur utilisateur){
@@ -51,7 +53,8 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
 
     private JPanel consulterInscriptionsPage() {
         JPanel panel = createBasePage();
-
+        consulterInscriptionController = new ConsulterInscriptionController(utilisateur);
+        panel.add(consulterInscriptionController.getView());
         return panel;
     }
 
@@ -78,6 +81,7 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
         profileButton.setText(Lang.get("profile"));
 
         consulterActiviteController.getView().refreshUIText();
+        consulterInscriptionController.getView().refreshUIText();
 
         revalidate();
         repaint();

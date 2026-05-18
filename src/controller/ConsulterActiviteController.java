@@ -25,7 +25,7 @@ public class ConsulterActiviteController {
         view.getInscriptionButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ServiceResult result = inscriptionService.inscrire(utilisateur, view.getSelectedActiviteId());
+                ServiceResult result = inscriptionService.inscrire(utilisateur, view.getSelectedId());
                 if (!result.getSuccess()) {
                     PopUpHandler.showError(view, result.getMessage());
                 }

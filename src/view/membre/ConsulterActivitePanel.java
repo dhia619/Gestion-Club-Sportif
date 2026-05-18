@@ -1,59 +1,30 @@
 package view.membre;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 import model.ActiviteDisponibleRow;
 import util.Lang;
 import util.UIConstants;
 import view.components.CustomButton;
-import view.components.CustomTable;
-import view.components.ActionsPanel;
+import view.components.TableWithActionsPanel;
 
-public class ConsulterActivitePanel extends JPanel {
+public class ConsulterActivitePanel extends TableWithActionsPanel<ActiviteDisponibleRow> {
 
-    private JTable activitesTable;
     private JButton inscriptionButton;
     private JButton refreshButton;
 
-    private ActionsPanel actionsPanel;
-
     public ConsulterActivitePanel(ArrayList<ActiviteDisponibleRow> activitesDisponibles) {
-        setLayout(new BorderLayout());
-        setBackground(UIConstants.secondaryBackgroundColor);
-        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-
-        actionsPanel = new ActionsPanel();
-
+        super(Lang.get("available.activities"), activitesDisponibles);
         inscriptionButton = new CustomButton(Lang.get("button.register"),UIConstants.emeraldGreen);    
         refreshButton = new CustomButton(Lang.get("button.refresh"),UIConstants.menuButtonBackgroundColor);
-
-        actionsPanel.addComponent(inscriptionButton);
-        actionsPanel.addComponent(refreshButton);
-        
-        add(actionsPanel, BorderLayout.NORTH);
-        add(createTablePanel(activitesDisponibles), BorderLayout.CENTER);
+        addActionButton(inscriptionButton);
+        addActionButton(refreshButton);
+        hideColumn(7);
     }
 
-    private JScrollPane createTablePanel(ArrayList<ActiviteDisponibleRow> activitesDisponibles) {
-        DefaultTableModel model = new DefaultTableModel(
-                getTableData(activitesDisponibles),
-                getTableColumns()
-        );
-
-        activitesTable = new CustomTable(model);
-        activitesTable.removeColumn(activitesTable.getColumnModel().getColumn(0));
-
-        JScrollPane scrollPane = new JScrollPane(activitesTable);
-        scrollPane.setBorder(BorderFactory.createLineBorder(UIConstants.secondaryBackgroundColor, 1, true));
-
-        return scrollPane;
-    }
-
-    private Object[] getTableColumns() {
+    protected Object[] getTableColumns() {
         return new Object[] {
                 "ID",
                 Lang.get("activity.name"),
@@ -77,15 +48,6 @@ public class ConsulterActivitePanel extends JPanel {
         return data;
     }
 
-    public void refreshTable(ArrayList<ActiviteDisponibleRow> activitesDisponibles) {
-        DefaultTableModel model = (DefaultTableModel) activitesTable.getModel();
-        model.setRowCount(0);
-
-        for (Object[] row : getTableData(activitesDisponibles)) {
-            model.addRow(row);
-        }
-    }
-
     private Object[] toTableRow(ActiviteDisponibleRow a) {
         return new Object[] {
             a.getActivite().getId(),
@@ -99,19 +61,6 @@ public class ConsulterActivitePanel extends JPanel {
         };
     }
 
-    public int getSelectedActiviteId() {
-
-        int viewRow = activitesTable.getSelectedRow();
-
-        if (viewRow == -1) {
-            return -1;
-        }
-
-        int modelRow = activitesTable.convertRowIndexToModel(viewRow);
-
-        return (int) activitesTable.getModel().getValueAt(modelRow, 0);
-    }
-
     public JButton getInscriptionButton() {
         return inscriptionButton;
     }
@@ -120,18 +69,9 @@ public class ConsulterActivitePanel extends JPanel {
         return refreshButton;
     }
 
-    public JTable getActivitesTable() {
-        return activitesTable;
-    }
-
-    protected void refreshTableHeaders() {
-        DefaultTableModel model = (DefaultTableModel) activitesTable.getModel();
-        model.setColumnIdentifiers(getTableColumns());
-        activitesTable.removeColumn(activitesTable.getColumnModel().getColumn(0));
-    }
-
     public void refreshUIText() {
 
+        titleLabel.setText(Lang.get("available.activities"));
         inscriptionButton.setText(Lang.get("button.register"));
         refreshButton.setText(Lang.get("button.refresh"));
 
