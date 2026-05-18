@@ -6,7 +6,7 @@ import util.Lang;
 
 import java.awt.Component;
 
-public class PopUpHandler {
+public class PopUp {
 
     public static void showError(Component parent, String message) {
         JOptionPane.showMessageDialog(parent, message, Lang.get("popup.title.error"), JOptionPane.ERROR_MESSAGE);

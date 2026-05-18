@@ -2,15 +2,34 @@ package model;
 
 public class InscriptionRow {
 
+    private Utilisateur utilisateur;
     private Inscription inscription;
     private Activite activite;
 
     public InscriptionRow(
-            Inscription inscription,
-            Activite activite
+        Utilisateur utilisateur,
+        Inscription inscription,
+        Activite activite
+    ) {
+        this.utilisateur = utilisateur;
+        this.inscription = inscription;
+        this.activite = activite;
+    }
+
+    public InscriptionRow(
+        Inscription inscription,
+        Activite activite
     ) {
         this.inscription = inscription;
         this.activite = activite;
+    }
+
+    public Utilisateur getUtilisateur() {
+        return utilisateur;
+    }
+
+    public void setUtilisateur(Utilisateur utilisateur) {
+        this.utilisateur = utilisateur;
     }
 
     public Inscription getInscription() {

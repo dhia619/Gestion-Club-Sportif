@@ -5,6 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import controller.GestionActiviteController;
+import controller.GestionInscriptionController;
 import controller.GestionMembreController;
 import model.Utilisateur;
 import util.Lang;
@@ -21,6 +22,7 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
     private JButton monitoringButton;
     private GestionMembreController membreController;
     private GestionActiviteController activiteController;
+    private GestionInscriptionController inscriptionController;
 
     private Utilisateur utilisateur;
 
@@ -59,13 +61,13 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
         JPanel panel = createBasePage();
         activiteController = new GestionActiviteController();
         panel.add(activiteController.getView());
-
         return panel;
     }
 
     private JPanel gestionInscriptionsPage() {
         JPanel panel = createBasePage();
-
+        inscriptionController = new GestionInscriptionController();
+        panel.add(inscriptionController.getView());
         return panel;
     }
 
@@ -100,6 +102,7 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
 
         membreController.getView().refreshUIText();
         activiteController.getView().refreshUIText();
+        inscriptionController.getView().refreshUIText();
 
         revalidate();
         repaint();

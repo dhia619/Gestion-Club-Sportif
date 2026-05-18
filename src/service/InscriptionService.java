@@ -70,10 +70,42 @@ public class InscriptionService {
     }
 
     public ServiceResult annuler(int inscriptionId) {
+        if (inscriptionId < 0) {
+            return new ServiceResult(false, Lang.get("error.choose.registration"));
+        }
         if (!inscriptionDAO.delete(inscriptionId)) {
             return new ServiceResult(false, Lang.get("error.cancel.registration"));
         }
         return new ServiceResult(true, Lang.get("success.cancel.registration"));
+    }
+
+    public ArrayList<InscriptionRow> getAll() {
+        ArrayList<InscriptionRow> inscriptionRows = new ArrayList<InscriptionRow>();
+        ArrayList<Inscription> inscriptions = inscriptionDAO.findAll();
+        for (Inscription inscription : inscriptions) {
+            inscriptionRows.add(new InscriptionRow(inscription.getMembre(), inscription, inscription.getActivite()));
+        }
+        return inscriptionRows;
+    }
+
+    public ServiceResult accepter(int inscriptionId) {
+        if (inscriptionId < 0) {
+            return new ServiceResult(false, Lang.get("error.choose.registration"));
+        }
+        if (!inscriptionDAO.updateStatut(inscriptionId, StatutInscription.ACCEPTEE)){
+            return new ServiceResult(false, Lang.get("error.accept.registration"));
+        }
+        return new ServiceResult(true, Lang.get("success.accept.registration"));
+    }
+
+    public ServiceResult refuser(int inscriptionId) {
+        if (inscriptionId < 0) {
+            return new ServiceResult(false, Lang.get("error.choose.registration"));
+        }
+        if (!inscriptionDAO.updateStatut(inscriptionId, StatutInscription.REFUSEE)){
+            return new ServiceResult(false, Lang.get("error.reject.registration"));
+        }
+        return new ServiceResult(true, Lang.get("success.reject.registration"));
     }
 
 }

@@ -8,7 +8,7 @@ import model.Utilisateur;
 import service.InscriptionService;
 import service.ServiceResult;
 import model.ActiviteDisponibleRow;
-import view.components.PopUpHandler;
+import view.components.PopUp;
 import view.membre.ConsulterActivitePanel;
 
 public class ConsulterActiviteController {
@@ -27,11 +27,11 @@ public class ConsulterActiviteController {
             public void actionPerformed(ActionEvent e) {
                 ServiceResult result = inscriptionService.inscrire(utilisateur, view.getSelectedId());
                 if (!result.getSuccess()) {
-                    PopUpHandler.showError(view, result.getMessage());
+                    PopUp.showError(view, result.getMessage());
                 }
                 else {
                     refreshTable(utilisateur.getId());
-                    PopUpHandler.showInfo(view, result.getMessage());
+                    PopUp.showInfo(view, result.getMessage());
                 }
             }
         });

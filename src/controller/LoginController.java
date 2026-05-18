@@ -10,7 +10,7 @@ import util.ConfigurationFileHandler;
 import util.Lang;
 import view.LoginPanel;
 import view.MainFrame;
-import view.components.PopUpHandler;
+import view.components.PopUp;
 
 public class LoginController {
 
@@ -37,10 +37,10 @@ public class LoginController {
         Utilisateur utilisateur;
 
         if (identifiant.isBlank()){
-            PopUpHandler.showError(this.view, Lang.get("error.empty_username"));
+            PopUp.showError(this.view, Lang.get("error.empty_username"));
         }
         else if (motDePasse.isBlank()){
-            PopUpHandler.showError(this.view, Lang.get("error.empty_password"));
+            PopUp.showError(this.view, Lang.get("error.empty_password"));
         }
         else {
             utilisateur = authService.authenticate(identifiant, motDePasse);
@@ -65,7 +65,7 @@ public class LoginController {
                     }
                 }
             } else {
-                PopUpHandler.showError(this.view, Lang.get("error.invalid_credentials"));
+                PopUp.showError(this.view, Lang.get("error.invalid_credentials"));
             }
         }
     }

@@ -13,7 +13,7 @@ import dao.ActiviteDAO;
 import model.Activite;
 import util.Lang;
 import view.admin.GestionActivitePanel;
-import view.components.PopUpHandler;
+import view.components.PopUp;
 
 public class GestionActiviteController {
 
@@ -57,24 +57,31 @@ public class GestionActiviteController {
                 }
             }
         });
+
+        view.getRefreshButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshTable();
+            }
+        });
     }
 
     private boolean checkFields() {
 
         if (view.getNom().isBlank()){
-            PopUpHandler.showError(view, Lang.get("error.enter.activity.name"));
+            PopUp.showError(view, Lang.get("error.enter.activity.name"));
             return false;
         }
         else if (view.getDescription().isBlank()){
-            PopUpHandler.showError(view, Lang.get("error.enter.activity.description"));
+            PopUp.showError(view, Lang.get("error.enter.activity.description"));
             return false;
         }
         else if (view.getCapaciteMax().isBlank()){
-            PopUpHandler.showError(view, Lang.get("error.enter.activity.capacity"));
+            PopUp.showError(view, Lang.get("error.enter.activity.capacity"));
             return false;
         }
         else if (String.valueOf(view.getHoraire()).equals("")){
-            PopUpHandler.showError(view, Lang.get("error.enter.activity.schedule"));
+            PopUp.showError(view, Lang.get("error.enter.activity.schedule"));
             return false;
         }
 
@@ -87,9 +94,7 @@ public class GestionActiviteController {
 
         Date spinnerDate = view.getHoraire();
 
-        LocalTime time = spinnerDate.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalTime();
+        LocalTime time = spinnerDate.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
 
         LocalDateTime fullDateTime = LocalDateTime.of(date, time);
 
@@ -113,14 +118,14 @@ public class GestionActiviteController {
                 boolean success = activiteDAO.create(nouvelleActivite);
                 if (success) {
                     refreshTable();
-                    PopUpHandler.showInfo(view, Lang.get("activity.add.success"));
+                    PopUp.showInfo(view, Lang.get("activity.add.success"));
 
                 } else {
-                    PopUpHandler.showError(view, Lang.get("activity.add.error"));
+                    PopUp.showError(view, Lang.get("activity.add.error"));
                 }
 
             } catch (Exception ex) {
-                PopUpHandler.showError(view, Lang.get("error.invalid.date.format"));
+                PopUp.showError(view, Lang.get("error.invalid.date.format"));
             }
         }
     }
@@ -133,12 +138,12 @@ public class GestionActiviteController {
             return;
         }
 
-        if (PopUpHandler.showConfirm(view, Lang.get("confirm.delete.activities"))) {
+        if (PopUp.showConfirm(view, Lang.get("confirm.delete.activities"))) {
             for (int id : ids){
                 activiteDAO.delete(id);
             }
             refreshTable();
-            PopUpHandler.showInfo(view, Lang.get("activity.delete.success"));
+            PopUp.showInfo(view, Lang.get("activity.delete.success"));
         }
     }
 
@@ -168,27 +173,25 @@ public class GestionActiviteController {
                                 fullDateTime
                         );
 
-                if (PopUpHandler.showConfirm(view, Lang.get("confirm.save.activity.changes"))) {
+                if (PopUp.showConfirm(view, Lang.get("confirm.save.activity.changes"))) {
 
                     if (activiteDAO.update(activiteModifiee)) {
                         refreshTable();
-                        PopUpHandler.showInfo(view, Lang.get("activity.update.success"));
+                        PopUp.showInfo(view, Lang.get("activity.update.success"));
                     } else {
-                        PopUpHandler.showError(view, Lang.get("activity.update.error"));
+                        PopUp.showError(view, Lang.get("activity.update.error"));
                     }
                 }
 
             } catch (Exception ex) {
 
-                PopUpHandler.showError(view, Lang.get("error.invalid.date.format"));
+                PopUp.showError(view, Lang.get("error.invalid.date.format"));
             }
         }
     }
 
     private void refreshTable() {
-
         ArrayList<Activite> activites = activiteDAO.findAll();
-
         view.refreshTable(activites);
     }
 

@@ -10,7 +10,7 @@ import model.Utilisateur;
 import util.HashUtil;
 import util.Lang;
 import view.admin.GestionMembrePanel;
-import view.components.PopUpHandler;
+import view.components.PopUp;
 
 public class GestionMembreController {
 
@@ -55,36 +55,43 @@ public class GestionMembreController {
                 }
             }
         });
+
+        view.getRefreshButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshTable();
+            }
+        });
     }
 
     private boolean checkFields() {
 
         if (view.getIdentifiant().isBlank()){
-            PopUpHandler.showError(view, Lang.get("error.enter.username"));
+            PopUp.showError(view, Lang.get("error.enter.username"));
             return false;
         }
         else if (view.getNom().isBlank()){
-            PopUpHandler.showError(view, Lang.get("error.enter.lastname"));
+            PopUp.showError(view, Lang.get("error.enter.lastname"));
             return false;
         }
         else if (view.getPrenom().isBlank()){
-            PopUpHandler.showError(view, Lang.get("error.enter.firstname"));
+            PopUp.showError(view, Lang.get("error.enter.firstname"));
             return false;
         }
         else if (view.getDateNaissance().isBlank()){
-            PopUpHandler.showError(view, Lang.get("error.enter.birthdate"));
+            PopUp.showError(view, Lang.get("error.enter.birthdate"));
             return false;
         }
         else if (view.getTelephone().isBlank()){
-            PopUpHandler.showError(view, Lang.get("error.enter.phone"));
+            PopUp.showError(view, Lang.get("error.enter.phone"));
             return false;
         }
         else if (view.getAdresse().isBlank()){
-            PopUpHandler.showError(view, Lang.get("error.enter.address"));
+            PopUp.showError(view, Lang.get("error.enter.address"));
             return false;
         }
         else if (view.getPoids().isBlank() || Double.parseDouble(view.getPoids()) <= 0){
-            PopUpHandler.showError(view, Lang.get("error.enter.valid.weight"));
+            PopUp.showError(view, Lang.get("error.enter.valid.weight"));
             return false;
         }
 
@@ -107,17 +114,17 @@ public class GestionMembreController {
             );
 
             if (utilisateurDAO.findByLogin(view.getIdentifiant()) != null) {
-                PopUpHandler.showError(view, Lang.get("error.username.exists"));
+                PopUp.showError(view, Lang.get("error.username.exists"));
                 return;
             }
             boolean success = utilisateurDAO.create(nouveauMembre);
             if (success) {
                 
                 refreshTable();
-                PopUpHandler.showInfo(view, Lang.get("member.add.success"));
+                PopUp.showInfo(view, Lang.get("member.add.success"));
 
             } else {
-                PopUpHandler.showError(view, Lang.get("member.add.error"));
+                PopUp.showError(view, Lang.get("member.add.error"));
             }
         }
     }
@@ -127,12 +134,12 @@ public class GestionMembreController {
         if (ids.length == 0){
             return;
         }
-        if (PopUpHandler.showConfirm(view, Lang.get("confirm.delete.members"))){
+        if (PopUp.showConfirm(view, Lang.get("confirm.delete.members"))){
             for (int id: ids){
                 utilisateurDAO.delete(id);
             }
             refreshTable();
-            PopUpHandler.showInfo(view, Lang.get("members.delete.success"));
+            PopUp.showInfo(view, Lang.get("member.delete.success"));
         }
         return;
     }
@@ -167,13 +174,13 @@ public class GestionMembreController {
                 ancienMembre.getFirstLogin()
             );
             
-            if (PopUpHandler.showConfirm(view, Lang.get("confirm.save.changes"))) {
+            if (PopUp.showConfirm(view, Lang.get("confirm.save.changes"))) {
                 if (utilisateurDAO.update(membreModifie)) {
                     refreshTable();
-                    PopUpHandler.showInfo(view, Lang.get("member.update.success"));
+                    PopUp.showInfo(view, Lang.get("member.update.success"));
                 }
                 else {
-                    PopUpHandler.showError(view, Lang.get("member.update.error"));
+                    PopUp.showError(view, Lang.get("member.update.error"));
                 }
             }
         }

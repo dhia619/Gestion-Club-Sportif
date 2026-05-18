@@ -8,7 +8,7 @@ import service.AuthService;
 import service.ServiceResult;
 import util.Lang;
 import view.MainFrame;
-import view.components.PopUpHandler;
+import view.components.PopUp;
 import view.membre.ChangePasswordPanel;
 
 public class ChangePasswordController {
@@ -34,24 +34,24 @@ public class ChangePasswordController {
         String confirmMotDePasse = this.view.getConfirmPassword();
         Utilisateur utilisateur = this.view.getUtilisateur();
         if (ancienMotDePasse.isBlank()) {
-            PopUpHandler.showError(this.view, Lang.get("error.enter.old.password"));
+            PopUp.showError(this.view, Lang.get("error.enter.old.password"));
         }
         else if (nouveauMotDePasse.isBlank()){
-            PopUpHandler.showError(this.view, Lang.get("error.enter.new.password"));
+            PopUp.showError(this.view, Lang.get("error.enter.new.password"));
         }
         else if (confirmMotDePasse.isBlank()){
-            PopUpHandler.showError(this.view, Lang.get("error.enter.confirm.password"));
+            PopUp.showError(this.view, Lang.get("error.enter.confirm.password"));
         }
         else if (!nouveauMotDePasse.equals(confirmMotDePasse)) {
-            PopUpHandler.showError(this.view, Lang.get("error.password.not.match"));
+            PopUp.showError(this.view, Lang.get("error.password.not.match"));
         } else {
-            if (PopUpHandler.showConfirm(this.view, Lang.get("confirm.change.password"))) {
+            if (PopUp.showConfirm(this.view, Lang.get("confirm.change.password"))) {
                 ServiceResult result = authService.changePassword(utilisateur, ancienMotDePasse, nouveauMotDePasse);
                 if (result.getSuccess()) {
-                        PopUpHandler.showInfo(this.view, Lang.get("success.password.change"));
+                        PopUp.showInfo(this.view, Lang.get("success.password.change"));
                         mainFrame.showMemberDashboard(utilisateur);
                 } else {
-                    PopUpHandler.showError(this.view, result.getMessage());
+                    PopUp.showError(this.view, result.getMessage());
                 }
             }
         }

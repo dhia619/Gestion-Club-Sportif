@@ -62,7 +62,7 @@ public class InscriptionDAO {
                     result.getInt("id"),
                     membre,
                     activite,
-                    result.getTimestamp("date_inscription").toLocalDateTime(),
+                    LocalDateTime.parse(result.getString("date_inscription")),
                     StatutInscription.valueOf(result.getString("statut"))
                 );
 

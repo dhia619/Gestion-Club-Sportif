@@ -67,12 +67,6 @@ public abstract class ManagementPanel<T> extends JPanel {
             }
         });
 
-        refreshButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                refreshTable(items);
-            }
-        });
         actionsPanel.addComponent(ajouterButton);
         actionsPanel.addComponent(refreshButton);
         panel.add(actionsPanel);
@@ -180,6 +174,10 @@ public abstract class ManagementPanel<T> extends JPanel {
 
     public JButton getSubmitFormButton() {
         return submitButton;
+    }
+
+    public JButton getRefreshButton() {
+        return refreshButton;
     }
 
     public JTable getTable() {

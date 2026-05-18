@@ -9,7 +9,7 @@ import model.Utilisateur;
 import service.InscriptionService;
 import service.ServiceResult;
 import util.Lang;
-import view.components.PopUpHandler;
+import view.components.PopUp;
 import view.membre.ConsulterInscriptionPanel;
 
 public class ConsulterInscriptionController {
@@ -33,16 +33,16 @@ public class ConsulterInscriptionController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (view.getSelectedId() < 0) {
-                    PopUpHandler.showError(view, Lang.get("error.choose.activity"));
+                    PopUp.showError(view, Lang.get("error.choose.activity"));
                     return;
                 } 
-                if (PopUpHandler.showConfirm(view, Lang.get("confirm.cancel.registration"))) {
+                if (PopUp.showConfirm(view, Lang.get("confirm.cancel.registration"))) {
                     ServiceResult result = inscriptionService.annuler(view.getSelectedId());
                     if (!result.getSuccess()) {
-                        PopUpHandler.showError(view, result.getMessage());
+                        PopUp.showError(view, result.getMessage());
                         return;
                     }
-                    PopUpHandler.showInfo(view, result.getMessage());
+                    PopUp.showInfo(view, result.getMessage());
                     refreshTable(utilisateur.getId());
                 }
             }

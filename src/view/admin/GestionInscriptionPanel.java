@@ -1,8 +1,9 @@
-package view.membre;
+package view.admin;
 
 import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import model.InscriptionRow;
@@ -11,20 +12,23 @@ import util.UIConstants;
 import view.components.CustomButton;
 import view.components.TableWithActionsPanel;
 
-public class ConsulterInscriptionPanel extends TableWithActionsPanel<InscriptionRow> {
-
-    private JButton annulerInscriptionButton;
+public class GestionInscriptionPanel extends TableWithActionsPanel<InscriptionRow>{
+    
+    private JButton accepterInscriptionButton;
+    private JButton refuserInscriptionButton;
+    private JButton supprimerInscriptionButton;
     private JButton refreshButton;
 
-    public ConsulterInscriptionPanel(ArrayList<InscriptionRow> inscriptionRows) {
-        super(Lang.get("my.registrations"), inscriptionRows);
-
-        annulerInscriptionButton = new CustomButton(Lang.get("button.cancel"),UIConstants.alizarinRed);    
+    public GestionInscriptionPanel(ArrayList<InscriptionRow> inscriptionRows) {
+        super(Lang.get("manage.registrations"), inscriptionRows);
+        accepterInscriptionButton = new CustomButton(Lang.get("button.accept"),UIConstants.emeraldGreen); 
+        refuserInscriptionButton = new CustomButton(Lang.get("button.reject"),UIConstants.alizarinRed); 
+        supprimerInscriptionButton = new CustomButton(Lang.get("button.delete"),UIConstants.terracotta);    
         refreshButton = new CustomButton(Lang.get("button.refresh"),UIConstants.menuButtonBackgroundColor);
 
-        hideColumn(0);
-
-        addActionButton(annulerInscriptionButton);
+        addActionButton(accepterInscriptionButton);
+        addActionButton(refuserInscriptionButton);
+        addActionButton(supprimerInscriptionButton);
         addActionButton(refreshButton);
     }
 
@@ -33,6 +37,7 @@ public class ConsulterInscriptionPanel extends TableWithActionsPanel<Inscription
             "ID",
             Lang.get("activity.name"),
             Lang.get("activity.description"),
+            Lang.get("user.username"),
             Lang.get("activity.date"),
             Lang.get("activity.time"),
             Lang.get("activity.status")
@@ -40,7 +45,7 @@ public class ConsulterInscriptionPanel extends TableWithActionsPanel<Inscription
     }
 
     protected Object[][] getTableData(ArrayList<InscriptionRow> inscriptionRows) {
-        Object[][] data = new Object[inscriptionRows.size()][6];
+        Object[][] data = new Object[inscriptionRows.size()][7];
 
         for (int i = 0; i < inscriptionRows.size(); i++) {
             InscriptionRow a = inscriptionRows.get(i);
@@ -64,18 +69,26 @@ public class ConsulterInscriptionPanel extends TableWithActionsPanel<Inscription
             inscriptionRow.getInscription().getId(),
             inscriptionRow.getActivite().getNom(),
             inscriptionRow.getActivite().getDescription(),
+            inscriptionRow.getUtilisateur().getLogin(),
             inscriptionRow.getActivite().getHoraire().toLocalDate().toString(),
             inscriptionRow.getActivite().getHoraire().toLocalTime().toString().substring(0, 5),
             Lang.get(inscriptionRow.getInscription().getStatut().toString())
         };
     }
-
-    public JButton getAnnulerInscriptionButton() {
-        return annulerInscriptionButton;
-    }
-
     public JButton getRefreshButton() {
         return refreshButton;
+    }
+
+    public JButton getAccepterInscriptionButton() {
+        return accepterInscriptionButton;
+    }
+
+    public JButton getRefuserInscriptionButton() {
+        return refuserInscriptionButton;
+    }
+
+    public JButton getSupprimerInscriptionButton() {
+        return supprimerInscriptionButton;
     }
 
     public JTable getTable() {
@@ -84,8 +97,10 @@ public class ConsulterInscriptionPanel extends TableWithActionsPanel<Inscription
 
     public void refreshUIText() {
 
-        titleLabel.setText(Lang.get("my.registrations"));
-        annulerInscriptionButton.setText(Lang.get("button.cancel"));
+        titleLabel.setText(Lang.get("manage.registrations"));
+        accepterInscriptionButton.setText(Lang.get("button.accept"));
+        refuserInscriptionButton.setText(Lang.get("button.reject"));
+        supprimerInscriptionButton.setText(Lang.get("button.delete"));
         refreshButton.setText(Lang.get("button.refresh"));
 
         refreshTableHeaders();
