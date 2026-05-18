@@ -20,14 +20,13 @@ public class LanguageHandler {
 
         if (locale.equals("ar")) {
             UIConstants.titleFont = "Dubai";
-            UIConstants.tableFont = "Dubai";
         } else {
             UIConstants.titleFont = "Georgia";
-            UIConstants.tableFont = "Bahnschrift";
         }
     }
 
     public static void saveLanguagePreference(String language) {
+        config = ConfigurationFileHandler.getConfig();
         setLocale(language);
         config.setProperty("locale", language);
         ConfigurationFileHandler.saveConfig(config);

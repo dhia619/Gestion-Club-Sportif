@@ -7,9 +7,9 @@ import model.Utilisateur;
 import service.AuthService;
 import service.ServiceResult;
 import util.Lang;
-import view.ChangePasswordPanel;
 import view.MainFrame;
 import view.components.PopUpHandler;
+import view.membre.ChangePasswordPanel;
 
 public class ChangePasswordController {
 

@@ -1,4 +1,4 @@
-package view;
+package view.admin;
 
 import java.awt.*;
 
@@ -26,6 +26,8 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
 
     public AdminDashboardPanel(Utilisateur utilisateur) {
         super(Lang.get("admin.dashboard.title"));
+
+        this.utilisateur = utilisateur;
 
         overviewButton = addMenuButton(Lang.get("overview"), "acceuil");
         membersButton = addMenuButton(Lang.get("members"), "membres");
@@ -90,7 +92,7 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
 
         logoutButton.setText(Lang.get("disconnect"));
 
-        overviewButton.setText(Lang.get("dashboard"));
+        overviewButton.setText(Lang.get("overview"));
         membersButton.setText(Lang.get("members"));
         activitiesButton.setText(Lang.get("activities"));
         registrationsButton.setText(Lang.get("registrations"));

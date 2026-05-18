@@ -9,7 +9,7 @@ import dao.UtilisateurDAO;
 import model.Utilisateur;
 import util.HashUtil;
 import util.Lang;
-import view.GestionMembrePanel;
+import view.admin.GestionMembrePanel;
 import view.components.PopUpHandler;
 
 public class GestionMembreController {
@@ -23,10 +23,10 @@ public class GestionMembreController {
 
         utilisateurDAO = new UtilisateurDAO();
 
-        ArrayList<Utilisateur> membres = utilisateurDAO.getAllUtilisateurs();
+        ArrayList<Utilisateur> membres = utilisateurDAO.findAll();
         view = new GestionMembrePanel(membres);
 
-        view.getSubmitMembreFormButton().addActionListener(new ActionListener() {
+        view.getSubmitFormButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (view.isEditMode()) {
@@ -47,7 +47,7 @@ public class GestionMembreController {
         view.getEditItem().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-                int[] ids = view.getSelectedMemberIds();
+                int[] ids = view.getSelectedIds();
 
                 if (ids.length == 1) {
                     membreModifieId = ids[0];
@@ -106,11 +106,11 @@ public class GestionMembreController {
                 true
             );
 
-            if (utilisateurDAO.getUtilisateurByLogin(view.getIdentifiant()) != null) {
+            if (utilisateurDAO.findByLogin(view.getIdentifiant()) != null) {
                 PopUpHandler.showError(view, Lang.get("error.username.exists"));
                 return;
             }
-            boolean success = utilisateurDAO.addUtilisateur(nouveauMembre);
+            boolean success = utilisateurDAO.create(nouveauMembre);
             if (success) {
                 
                 refreshTable();
@@ -123,13 +123,13 @@ public class GestionMembreController {
     }
 
     public void supprimerMembres(){
-        int [] ids = view.getSelectedMemberIds();
+        int [] ids = view.getSelectedIds();
         if (ids.length == 0){
             return;
         }
         if (PopUpHandler.showConfirm(view, Lang.get("confirm.delete.members"))){
             for (int id: ids){
-                utilisateurDAO.deleteUtilisateurById(id);
+                utilisateurDAO.delete(id);
             }
             refreshTable();
             PopUpHandler.showInfo(view, Lang.get("members.delete.success"));
@@ -138,7 +138,7 @@ public class GestionMembreController {
     }
 
     private void showEditForm(int id){
-        Utilisateur membre = utilisateurDAO.getUtilisateurById(id);
+        Utilisateur membre = utilisateurDAO.findById(id);
         if (membre != null){
             view.showEditForm(membre);
         }
@@ -146,7 +146,7 @@ public class GestionMembreController {
     
     public void modifierMembre(){
         if (checkFields()) {
-            Utilisateur ancienMembre = utilisateurDAO.getUtilisateurById(membreModifieId);
+            Utilisateur ancienMembre = utilisateurDAO.findById(membreModifieId);
             String passwordToSave;
             if (view.getMotDePasse().isBlank()) {
                 passwordToSave = ancienMembre.getMotDePasse();
@@ -168,7 +168,7 @@ public class GestionMembreController {
             );
             
             if (PopUpHandler.showConfirm(view, Lang.get("confirm.save.changes"))) {
-                if (utilisateurDAO.updateUtilisateur(membreModifie)) {
+                if (utilisateurDAO.update(membreModifie)) {
                     refreshTable();
                     PopUpHandler.showInfo(view, Lang.get("member.update.success"));
                 }
@@ -180,7 +180,7 @@ public class GestionMembreController {
     }
 
     private void refreshTable() {
-        ArrayList<Utilisateur> membres = utilisateurDAO.getAllUtilisateurs();
+        ArrayList<Utilisateur> membres = utilisateurDAO.findAll();
         view.refreshTable(membres);
     }
 

@@ -10,6 +10,9 @@ import controller.LoginController;
 import model.Utilisateur;
 import service.AuthService;
 import util.ConfigurationFileHandler;
+import view.admin.AdminDashboardPanel;
+import view.membre.ChangePasswordPanel;
+import view.membre.MembreDashboardPanel;
 
 public class MainFrame extends JFrame{
 

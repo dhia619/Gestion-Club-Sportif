@@ -11,7 +11,7 @@ import model.Activite;
 
 public class ActiviteDAO {
     
-    public Activite getActiviteById(int id) {
+    public Activite findById(int id) {
         Connection connection = DatabaseConnection.getConnection();
         Activite activite = null;
         try {
@@ -34,7 +34,7 @@ public class ActiviteDAO {
         return activite;
     }
 
-    public boolean addActivite(Activite activite) {
+    public boolean create(Activite activite) {
         Connection connection = DatabaseConnection.getConnection();
         boolean success = false;
         try {
@@ -59,7 +59,7 @@ public class ActiviteDAO {
         return success;
     }
 
-    public ArrayList<Activite> getAllActivites() {
+    public ArrayList<Activite> findAll() {
         Connection connection = DatabaseConnection.getConnection();
         ArrayList<Activite> activites = new ArrayList<>();
         try {
@@ -82,7 +82,7 @@ public class ActiviteDAO {
         return activites;
     }
 
-    public boolean updateActivite(Activite activite){
+    public boolean update(Activite activite){
         Connection connection = DatabaseConnection.getConnection();
         boolean success = false;
         try {
@@ -107,7 +107,7 @@ public class ActiviteDAO {
         return success;
     }
 
-    public boolean deleteActiviteById(int id) {
+    public boolean delete(int id) {
         Connection connection = DatabaseConnection.getConnection();
         boolean success = false;
         try {

@@ -1,6 +1,6 @@
 package controller;
 
-import view.MembreDashboardPanel;
+import view.membre.MembreDashboardPanel;
 
 public class MembreDashboardController {
     

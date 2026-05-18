@@ -11,7 +11,7 @@ import model.Utilisateur;
 
 public class UtilisateurDAO {
     
-    public Utilisateur getUtilisateurById(int id) {
+    public Utilisateur findById(int id) {
         Connection connection = DatabaseConnection.getConnection();
         Utilisateur utilisateur = null;
         try {
@@ -34,7 +34,7 @@ public class UtilisateurDAO {
         return utilisateur;
     }
 
-    public Utilisateur getUtilisateurByLogin(String login) {
+    public Utilisateur findByLogin(String login) {
         Connection connection = DatabaseConnection.getConnection();
         Utilisateur utilisateur = null;
         try {
@@ -57,7 +57,7 @@ public class UtilisateurDAO {
         return utilisateur;
     }
 
-    public boolean addUtilisateur(Utilisateur utilisateur) {
+    public boolean create(Utilisateur utilisateur) {
         Connection connection = DatabaseConnection.getConnection();
         boolean success = false;
         try {
@@ -87,7 +87,7 @@ public class UtilisateurDAO {
         return success;
     }
 
-    public ArrayList<Utilisateur> getAllUtilisateurs() {
+    public ArrayList<Utilisateur> findAll() {
         Connection connection = DatabaseConnection.getConnection();
         ArrayList<Utilisateur> utilisateurs = new ArrayList<>();
         try {
@@ -110,11 +110,23 @@ public class UtilisateurDAO {
         return utilisateurs;
     }
 
-    public boolean updateUtilisateur(Utilisateur utilisateur){
+    public boolean update(Utilisateur utilisateur){
         Connection connection = DatabaseConnection.getConnection();
         boolean success = false;
+        String query = """
+            "UPDATE utilisateurs 
+            SET nom = ?, 
+            prenom = ?, 
+            date_naissance = ?,
+            telephone = ?, 
+            adresse = ?, 
+            poids = ?, 
+            login = ?, 
+            mot_de_passe = ?, 
+            first_login = ? 
+            WHERE id = ?"
+        """;
         try {
-            String query = "UPDATE utilisateurs SET nom = ?, prenom = ?, date_naissance = ?, telephone = ?, adresse = ?, poids = ?, login = ?, mot_de_passe = ?, first_login = ? WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, utilisateur.getNom());
             statement.setString(2, utilisateur.getPrenom());
@@ -140,7 +152,7 @@ public class UtilisateurDAO {
         return success;
     }
 
-    public boolean deleteUtilisateurById(int id) {
+    public boolean delete(int id) {
         Connection connection = DatabaseConnection.getConnection();
         boolean success = false;
         try {
@@ -161,7 +173,7 @@ public class UtilisateurDAO {
         return success;
     }
 
-    public Utilisateur getUtilisateurByRememberMeToken(String token) {
+    public Utilisateur findByRememberMeToken(String token) {
         Connection connection = DatabaseConnection.getConnection();
         Utilisateur utilisateur = null;
         try {

@@ -7,7 +7,6 @@ import dao.UtilisateurDAO;
 import model.Utilisateur;
 import util.HashUtil;
 import util.Lang;
-import view.components.PopUpHandler;
 
 public class AuthService {
 
@@ -15,7 +14,7 @@ public class AuthService {
 
     public Utilisateur authenticate(String login, String motDePasse) {
 
-        Utilisateur utilisateur = utilisateurDAO.getUtilisateurByLogin(login);
+        Utilisateur utilisateur = utilisateurDAO.findByLogin(login);
         if (utilisateur != null) {
 
             String hashedMotDePasse = HashUtil.hash(motDePasse);
@@ -43,7 +42,7 @@ public class AuthService {
             return null;
         }
 
-        return utilisateurDAO.getUtilisateurByRememberMeToken(token);
+        return utilisateurDAO.findByRememberMeToken(token);
     }
 
     public void logout(Utilisateur utilisateur) {
@@ -56,7 +55,7 @@ public class AuthService {
         }
         utilisateur.setMotDePasse(HashUtil.hash(newPassword));
         utilisateur.setFirstLogin(false);
-        utilisateurDAO.updateUtilisateur(utilisateur);
+        utilisateurDAO.update(utilisateur);
         return new ServiceResult(true, null);
     }
 }
