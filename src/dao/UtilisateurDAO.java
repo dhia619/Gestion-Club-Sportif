@@ -114,7 +114,7 @@ public class UtilisateurDAO {
         Connection connection = DatabaseConnection.getConnection();
         boolean success = false;
         String query = """
-            "UPDATE utilisateurs 
+            UPDATE utilisateurs 
             SET nom = ?, 
             prenom = ?, 
             date_naissance = ?,
@@ -123,8 +123,8 @@ public class UtilisateurDAO {
             poids = ?, 
             login = ?, 
             mot_de_passe = ?, 
-            first_login = ? 
-            WHERE id = ?"
+            first_login = ?
+            WHERE id = ?
         """;
         try {
             PreparedStatement statement = connection.prepareStatement(query);

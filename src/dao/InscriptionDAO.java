@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import model.Activite;
 import model.Inscription;
+import model.MembreActifRow;
 import model.enums.StatutInscription;
 import model.Utilisateur;
 
@@ -43,6 +44,25 @@ public class InscriptionDAO {
         }
     }
 
+    public Inscription findById(int inscriptionId) {
+        
+        try ( 
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM inscriptions WHERE id = ?");
+        ) {
+            statement.setInt(1, inscriptionId);
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                return mapResultSetToInscription(result);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public ArrayList<Inscription> findAll() {
 
         ArrayList<Inscription> inscriptions = new ArrayList<>();
@@ -53,20 +73,7 @@ public class InscriptionDAO {
         ) {
             ResultSet result = statement.executeQuery();
             while (result.next()) {
-
-                Utilisateur membre = utilisateurDAO.findById(result.getInt("membre_id"));
-
-                Activite activite = activiteDAO.findById(result.getInt("activite_id"));
-
-                Inscription inscription = new Inscription(
-                    result.getInt("id"),
-                    membre,
-                    activite,
-                    LocalDateTime.parse(result.getString("date_inscription")),
-                    StatutInscription.valueOf(result.getString("statut"))
-                );
-
-                inscriptions.add(inscription);
+                inscriptions.add(mapResultSetToInscription(result));
             }
 
         } catch (SQLException e) {
@@ -90,8 +97,7 @@ public class InscriptionDAO {
             ResultSet result = statement.executeQuery();
 
             while (result.next()) {
-                Inscription inscription = mapResultSetToInscription(result);
-                inscriptions.add(inscription);
+                inscriptions.add(mapResultSetToInscription(result));
             }
 
         } catch (SQLException e) {
@@ -114,8 +120,7 @@ public class InscriptionDAO {
             ResultSet result = statement.executeQuery();
 
             while (result.next()) {
-                Inscription inscription = mapResultSetToInscription(result);
-                inscriptions.add(inscription);
+                inscriptions.add(mapResultSetToInscription(result));
             }
 
         } catch (SQLException e) {
@@ -186,5 +191,64 @@ public class InscriptionDAO {
             LocalDateTime.parse(resultSet.getString("date_inscription")),
             StatutInscription.valueOf(resultSet.getString("statut"))
         );
+    }
+
+    public ArrayList<MembreActifRow> findMembresPlusActifs() {
+        ArrayList<MembreActifRow> rows = new ArrayList<>();
+        String sql = """
+            SELECT u.id, count(u.id) as nb_inscriptions
+            FROM inscriptions i, utilisateurs u
+            WHERE statut = "ACCEPTEE" and i.membre_id = u.id
+            GROUP BY u.id
+            ORDER BY nb_inscriptions DESC;
+        """;
+        try (
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+
+            ResultSet result = statement.executeQuery();
+
+            while (result.next()) {
+                rows.add(mapResultSetToMembreActifRow(result));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rows;
+    }
+
+    private MembreActifRow mapResultSetToMembreActifRow(ResultSet resultSet) throws SQLException {
+        Utilisateur membre = utilisateurDAO.findById(resultSet.getInt("id"));
+        return new MembreActifRow(
+            membre,
+            resultSet.getInt("nb_inscriptions")
+        );
+    }
+    
+    public int getNbInscriptionsAccepteParActivite(int activiteId) {
+        String sql = """
+            SELECT COUNT(*) AS total
+            FROM inscriptions
+            WHERE statut = 'ACCEPTEE'
+            AND activite_id = ?;
+        """;
+        try (
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+
+            statement.setInt(1, activiteId);
+            ResultSet result = statement.executeQuery();
+
+            while (result.next()) {
+                return result.getInt("total");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

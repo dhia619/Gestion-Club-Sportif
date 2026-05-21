@@ -7,10 +7,11 @@ import javax.swing.*;
 import controller.GestionActiviteController;
 import controller.GestionInscriptionController;
 import controller.GestionMembreController;
+import controller.GestionSuiviController;
 import model.Utilisateur;
 import util.Lang;
 import util.LanguageHandler;
-import view.components.CustomLabel;
+
 import view.components.DashboardLayoutPanel;
 
 public class AdminDashboardPanel extends DashboardLayoutPanel {
@@ -23,6 +24,7 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
     private GestionMembreController membreController;
     private GestionActiviteController activiteController;
     private GestionInscriptionController inscriptionController;
+    private GestionSuiviController suiviController;
 
     private Utilisateur utilisateur;
 
@@ -73,13 +75,8 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
 
     private JPanel gestionSuiviPage() {
         JPanel panel = createBasePage();
-
-        JLabel complete = new CustomLabel("Activités complètes : Musculation, Natation");
-        JLabel active = new CustomLabel("Membres les plus actifs : Sami, Lina");
-
-        panel.add(complete);
-        panel.add(active);
-
+        suiviController = new GestionSuiviController();
+        panel.add(suiviController.getView());
         return panel;
     }
 
@@ -103,6 +100,7 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
         membreController.getView().refreshUIText();
         activiteController.getView().refreshUIText();
         inscriptionController.getView().refreshUIText();
+        suiviController.getView().refreshUIText();
 
         revalidate();
         repaint();

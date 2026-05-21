@@ -6,11 +6,10 @@ import java.util.ArrayList;
 import dao.ActiviteDAO;
 import dao.InscriptionDAO;
 import model.Activite;
-import model.ActiviteDisponibleRow;
 import model.Inscription;
 import model.InscriptionRow;
+import model.MembreActifRow;
 import model.Utilisateur;
-import model.enums.StatutActivite;
 import model.enums.StatutInscription;
 import util.Lang;
 
@@ -18,31 +17,6 @@ public class InscriptionService {
     
     private InscriptionDAO inscriptionDAO = new InscriptionDAO();
     private ActiviteDAO activiteDAO = new ActiviteDAO();
-    private ArrayList<ActiviteDisponibleRow> activitesDisponibles;
-
-    public ArrayList<ActiviteDisponibleRow> getActivitesDisponibles(int utilisateurId) {
-        activitesDisponibles = new ArrayList<ActiviteDisponibleRow>();
-        ArrayList<Activite> activites = activiteDAO.findAll();
-        for (Activite activite : activites) {
-            ArrayList<Inscription> inscriptions = inscriptionDAO.findByActivite(activite.getId());
-            boolean dejaInscri = false;
-            for (Inscription inscription : inscriptions) {
-                if (inscription.getMembre().getId() == utilisateurId) {
-                    dejaInscri = true;
-                }
-            }
-            int placeRestants = activite.getCapaciteMax() - inscriptions.size();
-            String statut = "-";
-            if (dejaInscri || placeRestants <= 0) {
-                continue;
-            } else {
-                statut = StatutActivite.DISPONIBLE.toString();
-            }
-            activitesDisponibles.add(new ActiviteDisponibleRow(activite, placeRestants, Lang.get(statut)));
-        }
-
-        return activitesDisponibles;
-    }
 
     public ServiceResult inscrire(Utilisateur utilisateur, int activiteId) {
         if (activiteId <= 0) {
@@ -88,9 +62,21 @@ public class InscriptionService {
         return inscriptionRows;
     }
 
+    public int getNombreInscriptionsAccepte(int activiteId) {
+        return inscriptionDAO.getNbInscriptionsAccepteParActivite(activiteId);
+    }
+
+    public ArrayList<MembreActifRow> getMembresPlusActifs() {
+        return inscriptionDAO.findMembresPlusActifs();
+    }
+
     public ServiceResult accepter(int inscriptionId) {
         if (inscriptionId < 0) {
             return new ServiceResult(false, Lang.get("error.choose.registration"));
+        }
+        Inscription inscription = inscriptionDAO.findById(inscriptionId);
+        if (getNombreInscriptionsAccepte(inscription.getActivite().getId()) >= inscription.getActivite().getCapaciteMax()) {
+            return new ServiceResult(false, Lang.get("error.activity.reached.max.capacity"));
         }
         if (!inscriptionDAO.updateStatut(inscriptionId, StatutInscription.ACCEPTEE)){
             return new ServiceResult(false, Lang.get("error.accept.registration"));

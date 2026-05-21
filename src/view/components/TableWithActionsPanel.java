@@ -18,22 +18,22 @@ public abstract class TableWithActionsPanel<T> extends JPanel {
 
         setLayout(new BorderLayout());
         setBackground(UIConstants.secondaryBackgroundColor);
-        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         titleLabel = new CustomLabel(title, 24);
         titleLabel.setAlignmentX(LEFT_ALIGNMENT);
-        JPanel topContainer = new JPanel();
-        topContainer.setOpaque(false);
-        topContainer.setLayout(new BoxLayout(topContainer, BoxLayout.Y_AXIS));
+
+        JPanel mainContainer = new JPanel();
+        mainContainer.setOpaque(false);
+        mainContainer.setLayout(new BoxLayout(mainContainer, BoxLayout.Y_AXIS));
+        mainContainer.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
         actionsPanel = new ActionsPanel();
-        actionsPanel.setAlignmentX(LEFT_ALIGNMENT);
-        topContainer.add(titleLabel);
-        topContainer.add(Box.createVerticalStrut(15));
-        topContainer.add(actionsPanel);
+        
+        mainContainer.add(actionsPanel);
+        mainContainer.add(createTablePanel(items));
 
-        add(topContainer, BorderLayout.NORTH);
-        add(createTablePanel(items), BorderLayout.CENTER);
+        add(titleLabel, BorderLayout.NORTH);
+        add(mainContainer, BorderLayout.CENTER);
     }
 
     private JScrollPane createTablePanel(ArrayList<T> items) {

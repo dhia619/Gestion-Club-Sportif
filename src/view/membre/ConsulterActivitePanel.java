@@ -4,18 +4,18 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
-import model.ActiviteDisponibleRow;
+import model.ActiviteRow;
 import util.Lang;
 import util.UIConstants;
 import view.components.CustomButton;
 import view.components.TableWithActionsPanel;
 
-public class ConsulterActivitePanel extends TableWithActionsPanel<ActiviteDisponibleRow> {
+public class ConsulterActivitePanel extends TableWithActionsPanel<ActiviteRow> {
 
     private JButton inscriptionButton;
     private JButton refreshButton;
 
-    public ConsulterActivitePanel(ArrayList<ActiviteDisponibleRow> activitesDisponibles) {
+    public ConsulterActivitePanel(ArrayList<ActiviteRow> activitesDisponibles) {
         super(Lang.get("available.activities"), activitesDisponibles);
         inscriptionButton = new CustomButton(Lang.get("button.register"),UIConstants.emeraldGreen);    
         refreshButton = new CustomButton(Lang.get("button.refresh"),UIConstants.menuButtonBackgroundColor);
@@ -37,18 +37,18 @@ public class ConsulterActivitePanel extends TableWithActionsPanel<ActiviteDispon
         };
     }
 
-    protected Object[][] getTableData(ArrayList<ActiviteDisponibleRow> activitesDisponibles) {
+    protected Object[][] getTableData(ArrayList<ActiviteRow> activitesDisponibles) {
         Object[][] data = new Object[activitesDisponibles.size()][8];
 
         for (int i = 0; i < activitesDisponibles.size(); i++) {
-            ActiviteDisponibleRow a = activitesDisponibles.get(i);
+            ActiviteRow a = activitesDisponibles.get(i);
 
             data[i] = toTableRow(a);
         }
         return data;
     }
 
-    private Object[] toTableRow(ActiviteDisponibleRow a) {
+    private Object[] toTableRow(ActiviteRow a) {
         return new Object[] {
             a.getActivite().getId(),
             a.getActivite().getNom(),

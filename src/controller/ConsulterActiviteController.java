@@ -5,20 +5,23 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import model.Utilisateur;
+import service.ActiviteService;
 import service.InscriptionService;
 import service.ServiceResult;
-import model.ActiviteDisponibleRow;
+import model.ActiviteRow;
 import view.components.PopUp;
 import view.membre.ConsulterActivitePanel;
 
 public class ConsulterActiviteController {
+
     private ConsulterActivitePanel view;
-    private ArrayList<ActiviteDisponibleRow> activitesDisponibles = new ArrayList<ActiviteDisponibleRow>();
+    private ArrayList<ActiviteRow> activitesDisponibles = new ArrayList<ActiviteRow>();
     private InscriptionService inscriptionService = new InscriptionService();
+    private ActiviteService activiteService = new ActiviteService();
 
     public ConsulterActiviteController(Utilisateur utilisateur) {
 
-        activitesDisponibles = inscriptionService.getActivitesDisponibles(utilisateur.getId());
+        activitesDisponibles = activiteService.getActivitesDisponiblesPourMembre(utilisateur.getId());
 
         view = new ConsulterActivitePanel(activitesDisponibles);
 
@@ -45,7 +48,7 @@ public class ConsulterActiviteController {
     }
 
     public void refreshTable(int utilisateurId) {
-        activitesDisponibles = inscriptionService.getActivitesDisponibles(utilisateurId);
+        activitesDisponibles = activiteService.getActivitesDisponiblesPourMembre(utilisateurId);
         view.refreshTable(activitesDisponibles);
     }
 

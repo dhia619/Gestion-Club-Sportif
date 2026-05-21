@@ -1,11 +1,11 @@
 package model;
 
-public class ActiviteDisponibleRow {
+public class ActiviteRow {
     private Activite activite;
     private int placesRestantes;
     private String statut;
 
-    public ActiviteDisponibleRow(Activite activite, int placesRestantes, String statut) {
+    public ActiviteRow(Activite activite, int placesRestantes, String statut) {
         this.activite = activite;
         this.placesRestantes = placesRestantes;
         this.statut = statut;
