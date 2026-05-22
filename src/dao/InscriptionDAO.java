@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import model.Activite;
+import model.ActiviteRow;
 import model.Inscription;
 import model.MembreActifRow;
 import model.enums.StatutInscription;
@@ -193,20 +194,33 @@ public class InscriptionDAO {
         );
     }
 
-    public ArrayList<MembreActifRow> findMembresPlusActifs() {
+    public ArrayList<MembreActifRow> findMembresPlusActifs(int n) {
         ArrayList<MembreActifRow> rows = new ArrayList<>();
-        String sql = """
-            SELECT u.id, count(u.id) as nb_inscriptions
-            FROM inscriptions i, utilisateurs u
-            WHERE statut = "ACCEPTEE" and i.membre_id = u.id
-            GROUP BY u.id
-            ORDER BY nb_inscriptions DESC;
-        """;
+        String sql;
+        if (n >= 0) {
+            sql = """
+                SELECT u.id, count(u.id) as nb_inscriptions
+                FROM inscriptions i, utilisateurs u
+                WHERE statut = "ACCEPTEE" and i.membre_id = u.id
+                GROUP BY u.id
+                ORDER BY nb_inscriptions DESC
+                LIMIT ?;
+            """;
+        }
+        else {
+            sql = """
+                SELECT u.id, count(u.id) as nb_inscriptions
+                FROM inscriptions i, utilisateurs u
+                WHERE statut = "ACCEPTEE" and i.membre_id = u.id
+                GROUP BY u.id
+                ORDER BY nb_inscriptions DESC;
+            """;
+        }
         try (
             Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql);
         ) {
-
+            if (n >= 0) statement.setInt(1, n);
             ResultSet result = statement.executeQuery();
 
             while (result.next()) {
@@ -242,7 +256,7 @@ public class InscriptionDAO {
             statement.setInt(1, activiteId);
             ResultSet result = statement.executeQuery();
 
-            while (result.next()) {
+            if (result.next()) {
                 return result.getInt("total");
             }
 
@@ -250,5 +264,142 @@ public class InscriptionDAO {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public int countInscriptions() {
+        String sql = "SELECT COUNT(*) FROM inscriptions";
+        try (
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countMembreInscriptions(int membreId) {
+        String sql = "SELECT COUNT(*) FROM inscriptions WHERE membre_id = ?";
+        try (
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            statement.setInt(1, membreId);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    } 
+
+    public int countPendingInscriptions() {
+        String sql = "SELECT COUNT(*) FROM inscriptions WHERE statut = 'EN_ATTENTE'";
+        try (
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countMembrePendingInscriptions(int membreId) {
+        String sql = "SELECT COUNT(*) FROM inscriptions WHERE membre_id = ? AND statut = 'EN_ATTENTE'";
+        try (
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            statement.setInt(1, membreId);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countMembreAcceptedInscriptions(int membreId) {
+        String sql = "SELECT COUNT(*) FROM inscriptions WHERE membre_id = ? AND statut = 'ACCEPTEE'";
+        try (
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            statement.setInt(1, membreId);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countMembreRejectedInscriptions(int membreId) {
+        String sql = "SELECT COUNT(*) FROM inscriptions WHERE membre_id = ? AND statut = 'REFUSEE'";
+        try (
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            statement.setInt(1, membreId);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public ArrayList<ActiviteRow> findActivitesPopulaires(int n) {
+        String sql;
+        if (n>=0) {
+            sql = """                
+                SELECT activite_id, COUNT(activite_id) as total
+                FROM inscriptions
+                GROUP BY activite_id
+                ORDER BY COUNT(activite_id) DESC
+                LIMIT ?;
+            """;
+        }
+        else {
+            sql = """                
+                SELECT activite_id, COUNT(activite_id) as total
+                FROM inscriptions
+                GROUP BY activite_id
+                ORDER BY COUNT(activite_id) DESC;
+            """;
+        }
+        ArrayList<ActiviteRow> activitesPopulaires = new ArrayList<ActiviteRow>();
+        try (
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            if (n>=0) statement.setInt(1, n);
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                activitesPopulaires.add(
+                    new ActiviteRow(activiteDAO.findById(result.getInt("activite_id")), result.getInt("total"))
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return activitesPopulaires;
     }
 }

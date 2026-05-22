@@ -237,4 +237,20 @@ public class UtilisateurDAO {
             resultSet.getBoolean("first_login")
         );
     }
+
+    public int countMembres() {
+        String sql = "SELECT COUNT(*) FROM utilisateurs where role='MEMBRE'";
+        try (
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

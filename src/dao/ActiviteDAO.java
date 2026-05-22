@@ -137,4 +137,70 @@ public class ActiviteDAO {
             resultSet.getObject("horaire", LocalDateTime.class)
         );
     }
+
+    public int countActivites() {
+        String sql = "SELECT COUNT(*) FROM activites";
+        try (
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countActivitesDisponibles() {
+        String sql = """
+            SELECT COUNT(*)
+            FROM activites a
+            WHERE (
+                SELECT COUNT(*)
+                FROM inscriptions i
+                WHERE i.activite_id = a.id
+                AND i.statut = 'ACCEPTEE'
+            ) < a.capacite_max;
+        """;
+        try (
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countActivitesComplets() {
+        String sql = """
+            SELECT COUNT(*)
+            FROM activites a
+            WHERE (
+                SELECT COUNT(*)
+                FROM inscriptions i
+                WHERE i.activite_id = a.id
+                AND i.statut = 'ACCEPTEE'
+            ) >= a.capacite_max;
+        """;
+        try (
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

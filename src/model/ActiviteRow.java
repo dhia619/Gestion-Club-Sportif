@@ -11,6 +11,11 @@ public class ActiviteRow {
         this.statut = statut;
     }
 
+    public ActiviteRow(Activite activite, int placesRestantes) {
+        this.activite = activite;
+        this.placesRestantes = placesRestantes;
+    }
+
     public Activite getActivite() {
         return activite;
     }

@@ -62,12 +62,12 @@ public class InscriptionService {
         return inscriptionRows;
     }
 
-    public int getNombreInscriptionsAccepte(int activiteId) {
+    public int getNombreInscriptionsAccepteParActivite(int activiteId) {
         return inscriptionDAO.getNbInscriptionsAccepteParActivite(activiteId);
     }
 
-    public ArrayList<MembreActifRow> getMembresPlusActifs() {
-        return inscriptionDAO.findMembresPlusActifs();
+    public ArrayList<MembreActifRow> getMembresPlusActifs(int n) {
+        return inscriptionDAO.findMembresPlusActifs(n);
     }
 
     public ServiceResult accepter(int inscriptionId) {
@@ -75,7 +75,7 @@ public class InscriptionService {
             return new ServiceResult(false, Lang.get("error.choose.registration"));
         }
         Inscription inscription = inscriptionDAO.findById(inscriptionId);
-        if (getNombreInscriptionsAccepte(inscription.getActivite().getId()) >= inscription.getActivite().getCapaciteMax()) {
+        if (getNombreInscriptionsAccepteParActivite(inscription.getActivite().getId()) >= inscription.getActivite().getCapaciteMax()) {
             return new ServiceResult(false, Lang.get("error.activity.reached.max.capacity"));
         }
         if (!inscriptionDAO.updateStatut(inscriptionId, StatutInscription.ACCEPTEE)){
@@ -94,4 +94,27 @@ public class InscriptionService {
         return new ServiceResult(true, Lang.get("success.reject.registration"));
     }
 
+    public int getNombreMesInscriptions(int membreId) {
+        return inscriptionDAO.countMembreInscriptions(membreId);
+    }
+
+    public int getNombreInscriptions() {
+        return inscriptionDAO.countInscriptions();
+    }
+
+    public int getNombreInscriptionsEnAttente() {
+        return inscriptionDAO.countPendingInscriptions();
+    }
+
+    public int getNombreInscriptionsEnAttentePourMembre(int membreId) {
+        return inscriptionDAO.countMembrePendingInscriptions(membreId);
+    }
+
+    public int getNombreInscriptionsAccepteePourMembre(int membreId) {
+        return inscriptionDAO.countMembreAcceptedInscriptions(membreId);
+    }
+
+    public int getNombreInscriptionsRefuseePourMembre(int membreId) {
+        return inscriptionDAO.countMembreRejectedInscriptions(membreId);
+    }
 }

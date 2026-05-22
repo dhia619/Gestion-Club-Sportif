@@ -18,8 +18,12 @@ public abstract class DashboardLayoutPanel extends JPanel {
     protected CardLayout cardLayout;
 
     protected JButton logoutButton;
+    protected JButton notificationButton;
     protected JComboBox<String> languageBox;
     protected JLabel titleLabel;
+
+    protected boolean hasNotifications;
+    protected String notificationImagePath;
 
     public DashboardLayoutPanel(String title) {
         setLayout(new BorderLayout());
@@ -49,9 +53,24 @@ public abstract class DashboardLayoutPanel extends JPanel {
 
         logoutButton = new CustomButton(Lang.get("disconnect"), UIConstants.terracotta);
 
+        if (this.hasNotifications) notificationImagePath = "notification.png";
+        else notificationImagePath = "no_notification.png";
+
+        ImageIcon notificationImage = new ImageIcon("./resources/images/"+notificationImagePath);
+        notificationButton = new CustomButton(Color.WHITE, notificationImage);
+        notificationButton.setToolTipText(Lang.get("notifications"));
+
+        notificationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                cardLayout.show(contentPanel, "notifications");
+            }
+        });
+        
         String[] languages = {"English", "Français", "العربية"};
         languageBox = new JComboBox<>(languages);
         languageBox.setPreferredSize(new Dimension(90, 35));
+        languageBox.setToolTipText(Lang.get("language"));
 
         languageBox.setSelectedItem(switch (LanguageHandler.getLocale()) {
             case "en" -> "English";
@@ -67,6 +86,7 @@ public abstract class DashboardLayoutPanel extends JPanel {
 
         rightPanel.add(new JLabel(languageIcon));
         rightPanel.add(languageBox);
+        rightPanel.add(notificationButton);
         rightPanel.add(logoutButton);
 
         topBar.add(titleLabel, BorderLayout.CENTER);
@@ -125,9 +145,23 @@ public abstract class DashboardLayoutPanel extends JPanel {
     public JComboBox<String> getLanguageBox() {
         return languageBox;
     }
+    
+    public JButton getNotificationButton() {
+        return notificationButton;
+    }
 
-    public void setTitleText(String title) {
-        titleLabel.setText(title);
+    public void setHasNotifications(boolean hasNotifications) {
+        this.hasNotifications = hasNotifications;
+
+        String imagePath = hasNotifications
+                ? "./resources/images/notification.png"
+                : "./resources/images/no_notification.png";
+
+        notificationButton.setIcon(new ImageIcon(imagePath));
+    }
+
+    public CardLayout getCardLayout(){
+        return cardLayout;
     }
 
     public abstract Utilisateur getUtilisateur();

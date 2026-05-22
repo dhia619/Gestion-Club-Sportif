@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 
 import controller.ConsulterActiviteController;
 import controller.ConsulterInscriptionController;
+import controller.MembreOverviewController;
 import model.Utilisateur;
 import util.Lang;
 import util.LanguageHandler;
@@ -20,6 +21,7 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
     private JButton profileButton;
     private ConsulterActiviteController consulterActiviteController;
     private ConsulterInscriptionController consulterInscriptionController;
+    private MembreOverviewController membreOverviewController;
     private Utilisateur utilisateur;
     
     public MembreDashboardPanel(Utilisateur utilisateur){
@@ -40,7 +42,8 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
 
     private JPanel overviewPage() {
         JPanel panel = createBasePage();
-
+        membreOverviewController = new MembreOverviewController(utilisateur);
+        panel.add(membreOverviewController.getView());
         return panel;
     }
 
@@ -74,7 +77,9 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
         titleLabel.setText(Lang.get("user.dashboard.title") + " " + utilisateur.getPrenom() + " " + utilisateur.getNom());
 
         logoutButton.setText(Lang.get("disconnect"));
-
+        notificationButton.setToolTipText(Lang.get("notifications"));
+        languageBox.setToolTipText(Lang.get("language"));
+        
         overviewButton.setText(Lang.get("overview"));
         activitiesButton.setText(Lang.get("activities"));
         registrationsButton.setText(Lang.get("registrations"));
@@ -82,6 +87,7 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
 
         consulterActiviteController.getView().refreshUIText();
         consulterInscriptionController.getView().refreshUIText();
+        membreOverviewController.refreshUI(utilisateur);
 
         revalidate();
         repaint();

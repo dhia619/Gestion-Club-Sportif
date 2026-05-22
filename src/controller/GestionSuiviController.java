@@ -22,7 +22,7 @@ public class GestionSuiviController {
 
     public GestionSuiviController() {
         activiteRows = activiteService.getAllActivites();
-        membreActifRows = inscriptionService.getMembresPlusActifs();
+        membreActifRows = inscriptionService.getMembresPlusActifs(-1);
         view = new GestionSuiviPanel(activiteRows, membreActifRows);
 
         view.getSuiviActivitePanel().getRefreshButton().addActionListener(new ActionListener() {
@@ -42,7 +42,7 @@ public class GestionSuiviController {
         view.getMembreActifPanel().getRefreshButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                membreActifRows = inscriptionService.getMembresPlusActifs();
+                membreActifRows = inscriptionService.getMembresPlusActifs(-1);
                 refreshMembreActifTable(membreActifRows);
             }
         });

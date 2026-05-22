@@ -23,7 +23,7 @@ public class ActiviteService {
             if (inscriptionDAO.findByMembreAndActivite(utilisateurId, activite.getId()) != null) {
                 dejaInscri = true;
             }
-            int placeRestants = activite.getCapaciteMax() - inscriptionService.getNombreInscriptionsAccepte(activite.getId());
+            int placeRestants = activite.getCapaciteMax() - inscriptionService.getNombreInscriptionsAccepteParActivite(activite.getId());
             String statut = "-";
             if (dejaInscri || placeRestants <= 0) {
                 continue;
@@ -39,7 +39,7 @@ public class ActiviteService {
         ArrayList<ActiviteRow> activiteRows = new ArrayList<ActiviteRow>();
         ArrayList<Activite> activites = activiteDAO.findAll();
         for (Activite activite : activites) {
-            int placeRestants = activite.getCapaciteMax() - inscriptionService.getNombreInscriptionsAccepte(activite.getId());
+            int placeRestants = activite.getCapaciteMax() - inscriptionService.getNombreInscriptionsAccepteParActivite(activite.getId());
             String statut = "-";
             if (placeRestants <= 0) {statut = StatutActivite.COMPLET.toString();}
             else {statut = StatutActivite.DISPONIBLE.toString();}
@@ -52,7 +52,7 @@ public class ActiviteService {
         ArrayList<ActiviteRow> activitesDisponibles = new ArrayList<ActiviteRow>();
         ArrayList<Activite> activites = activiteDAO.findAll();
         for (Activite activite : activites) {
-            int placeRestants = activite.getCapaciteMax() - inscriptionService.getNombreInscriptionsAccepte(activite.getId());
+            int placeRestants = activite.getCapaciteMax() - inscriptionService.getNombreInscriptionsAccepteParActivite(activite.getId());
             if (placeRestants > 0) activitesDisponibles.add(new ActiviteRow(activite, placeRestants, StatutActivite.DISPONIBLE.toString()));
         }
         return activitesDisponibles;
@@ -62,9 +62,25 @@ public class ActiviteService {
         ArrayList<ActiviteRow> activitesComplets = new ArrayList<ActiviteRow>();
         ArrayList<Activite> activites = activiteDAO.findAll();
         for (Activite activite : activites) {
-            int placeRestants = activite.getCapaciteMax() - inscriptionService.getNombreInscriptionsAccepte(activite.getId());
+            int placeRestants = activite.getCapaciteMax() - inscriptionService.getNombreInscriptionsAccepteParActivite(activite.getId());
             if (placeRestants <= 0) activitesComplets.add(new ActiviteRow(activite, placeRestants, StatutActivite.COMPLET.toString()));
         }
         return activitesComplets;
+    }
+
+    public ArrayList<ActiviteRow> getActivitesPopulaires(int n) {
+        return inscriptionDAO.findActivitesPopulaires(n);
+    }
+
+    public int getNombreActivites() {
+        return activiteDAO.countActivites();
+    }
+
+    public int getNombreActivitesCompletes() {
+        return activiteDAO.countActivitesComplets();
+    }
+
+    public int getNombreActivitesDisponibles() {
+        return activiteDAO.countActivitesDisponibles();
     }
 }

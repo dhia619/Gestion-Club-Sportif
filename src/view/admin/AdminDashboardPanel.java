@@ -8,6 +8,7 @@ import controller.GestionActiviteController;
 import controller.GestionInscriptionController;
 import controller.GestionMembreController;
 import controller.GestionSuiviController;
+import controller.AdminOverviewController;
 import model.Utilisateur;
 import util.Lang;
 import util.LanguageHandler;
@@ -25,6 +26,7 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
     private GestionActiviteController activiteController;
     private GestionInscriptionController inscriptionController;
     private GestionSuiviController suiviController;
+    private AdminOverviewController adminOverviewController;
 
     private Utilisateur utilisateur;
 
@@ -39,16 +41,18 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
         registrationsButton = addMenuButton(Lang.get("registrations"), "inscriptions");
         monitoringButton = addMenuButton(Lang.get("monitoring"), "suivi");
 
-        addPage("acceuil", createDashboardPage());
+        addPage("acceuil", createOverviewPage());
         addPage("membres", gestionMembresPage());
         addPage("activites", gestionActivitesPage());
         addPage("inscriptions", gestionInscriptionsPage());
         addPage("suivi", gestionSuiviPage());
+        addPage("notifications", notificationsPage());
     }
 
-    private JPanel createDashboardPage() {
+    private JPanel createOverviewPage() {
         JPanel panel = createBasePage();
-
+        adminOverviewController = new AdminOverviewController();
+        panel.add(adminOverviewController.getView());
         return panel;
     }
 
@@ -80,6 +84,11 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
         return panel;
     }
 
+    private JPanel notificationsPage() {
+        JPanel panel = createBasePage();
+        return panel;
+    }
+
     public Utilisateur getUtilisateur() {
         return utilisateur;
     }
@@ -90,6 +99,8 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
         titleLabel.setText(Lang.get("admin.dashboard.title") + " ");
 
         logoutButton.setText(Lang.get("disconnect"));
+        notificationButton.setToolTipText(Lang.get("notifications"));
+        languageBox.setToolTipText(Lang.get("language"));
 
         overviewButton.setText(Lang.get("overview"));
         membersButton.setText(Lang.get("members"));
@@ -101,6 +112,7 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
         activiteController.getView().refreshUIText();
         inscriptionController.getView().refreshUIText();
         suiviController.getView().refreshUIText();
+        adminOverviewController.refreshUI();
 
         revalidate();
         repaint();
