@@ -20,6 +20,7 @@ public class UIConstants {
     public static final Color textFieldBackgroundColor = new Color(245, 246, 248);
     public static final Color borderColor = new Color(220, 222, 226);
     public static final Color lightGrey = new Color(220, 220, 220);
+    public static final Color lightBlue = new Color(232, 242, 255);
 
     public static final Color tableRowEvenColor = Color.WHITE;
     public static final Color tableRowOddColor = new Color(244, 247, 250);

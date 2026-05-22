@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import controller.ConsulterActiviteController;
 import controller.ConsulterInscriptionController;
 import controller.MembreOverviewController;
+import controller.NotificationController;
 import model.Utilisateur;
 import util.Lang;
 import util.LanguageHandler;
@@ -22,6 +23,7 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
     private ConsulterActiviteController consulterActiviteController;
     private ConsulterInscriptionController consulterInscriptionController;
     private MembreOverviewController membreOverviewController;
+    private NotificationController notificationController;
     private Utilisateur utilisateur;
     
     public MembreDashboardPanel(Utilisateur utilisateur){
@@ -37,6 +39,7 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
         addPage("activites", consulterActivitesPage());
         addPage("inscriptions", consulterInscriptionsPage());
         addPage("profile", profilePage());
+        addPage("notifications", notificationsPage());
     }
 
 
@@ -67,6 +70,13 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
         return panel;
     }
 
+    private JPanel notificationsPage() {
+        JPanel panel = createBasePage();
+        notificationController = new NotificationController(utilisateur);
+        panel.add(notificationController.getView());
+        return panel;
+    }
+
     public Utilisateur getUtilisateur() {
         return utilisateur;
     }
@@ -88,6 +98,7 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
         consulterActiviteController.getView().refreshUIText();
         consulterInscriptionController.getView().refreshUIText();
         membreOverviewController.refreshUI(utilisateur);
+        notificationController.getView().refreshUIText();
 
         revalidate();
         repaint();

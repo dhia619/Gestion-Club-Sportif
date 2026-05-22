@@ -53,14 +53,14 @@ public class MainFrame extends JFrame{
     public void showAdminDashboard(Utilisateur utilisateur) {
         AdminDashboardPanel adminDashboardPanel = new AdminDashboardPanel(utilisateur);
         this.setContentPane(adminDashboardPanel);
-        new DashboardController(adminDashboardPanel, this);
+        new DashboardController(adminDashboardPanel, this, utilisateur);
         revalidate();
         repaint();
     }
 
     public void showMemberDashboard(Utilisateur utilisateur) {
         MembreDashboardPanel membreDashboardPanel = new MembreDashboardPanel(utilisateur);
-        new DashboardController(membreDashboardPanel, this);
+        new DashboardController(membreDashboardPanel, this, utilisateur);
         this.setContentPane(membreDashboardPanel);
         revalidate();
         repaint();

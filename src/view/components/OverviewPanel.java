@@ -1,9 +1,8 @@
-package view.admin;
+package view.components;
 
 import javax.swing.*;
 import util.Lang;
 import util.UIConstants;
-import view.components.CustomLabel;
 
 import java.awt.*;
 import java.util.List;

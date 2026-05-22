@@ -17,6 +17,7 @@ public class DatabaseInitializer {
             stmt.execute(DatabaseSchema.CREATE_UTILISATEURS);
             stmt.execute(DatabaseSchema.CREATE_ACTIVITES);
             stmt.execute(DatabaseSchema.CREATE_INSCRITPTIONS);
+            stmt.execute(DatabaseSchema.CREATE_NOTIFICATIONS);
             stmt.close();
             conn.close();
 

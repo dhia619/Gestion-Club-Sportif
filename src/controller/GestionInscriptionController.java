@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import model.InscriptionRow;
+import model.Utilisateur;
 import service.InscriptionService;
 import service.ServiceResult;
 import util.Lang;
@@ -18,7 +19,7 @@ public class GestionInscriptionController {
     private InscriptionService inscriptionService = new InscriptionService();
     private GestionInscriptionPanel view;
 
-    public GestionInscriptionController() {
+    public GestionInscriptionController(Utilisateur admin) {
 
         inscriptionRows = inscriptionService.getAll();
         view = new GestionInscriptionPanel(inscriptionRows);
@@ -34,7 +35,7 @@ public class GestionInscriptionController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (PopUp.showConfirm(view, Lang.get("confirm.accept.registration"))) {
-                    ServiceResult result = inscriptionService.accepter(view.getSelectedId());
+                    ServiceResult result = inscriptionService.accepter(view.getSelectedId(), admin);
                     if (!result.getSuccess()) {
                         PopUp.showError(view, result.getMessage());
                     } else {
@@ -59,7 +60,6 @@ public class GestionInscriptionController {
                 }
             }
         });
-
 
         view.getSupprimerInscriptionButton().addActionListener(new ActionListener() {
             @Override

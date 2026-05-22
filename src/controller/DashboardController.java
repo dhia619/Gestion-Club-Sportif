@@ -2,10 +2,15 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Properties;
 
+
+import model.Notification;
+import model.Utilisateur;
 import service.AuthService;
+import service.NotificationService;
 import util.ConfigurationFileHandler;
 import util.LanguageHandler;
 import view.components.DashboardLayoutPanel;
@@ -15,8 +20,16 @@ public class DashboardController {
 
     private DashboardLayoutPanel view;
 
-    public DashboardController(DashboardLayoutPanel view, MainFrame mainFrame) {
+    public DashboardController(DashboardLayoutPanel view, MainFrame mainFrame, Utilisateur utilisateur) {
         this.view = view;
+        NotificationService notificationService = new NotificationService();
+        ArrayList<Notification> notifications = notificationService.findUserNotifications(utilisateur.getId());
+        for (Notification notification : notifications) {
+            if (!notification.getLu()) {
+                view.setHasNotifications(true);
+                break;
+            }
+        }
 
         this.view.getLogoutButton().addActionListener(new ActionListener() {
             @Override
@@ -60,5 +73,9 @@ public class DashboardController {
             }
 
         });
+    }
+
+    public DashboardLayoutPanel getView() {
+        return this.view;
     }
 }

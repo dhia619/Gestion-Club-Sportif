@@ -10,6 +10,7 @@ import model.Inscription;
 import model.InscriptionRow;
 import model.MembreActifRow;
 import model.Utilisateur;
+import model.Notification;
 import model.enums.StatutInscription;
 import util.Lang;
 
@@ -17,6 +18,7 @@ public class InscriptionService {
     
     private InscriptionDAO inscriptionDAO = new InscriptionDAO();
     private ActiviteDAO activiteDAO = new ActiviteDAO();
+    private NotificationService notificationService = new NotificationService();
 
     public ServiceResult inscrire(Utilisateur utilisateur, int activiteId) {
         if (activiteId <= 0) {
@@ -50,6 +52,15 @@ public class InscriptionService {
         if (!inscriptionDAO.delete(inscriptionId)) {
             return new ServiceResult(false, Lang.get("error.cancel.registration"));
         }
+        Inscription inscription = inscriptionDAO.findById(inscriptionId);
+        notificationService.create(
+            new Notification(
+                inscription.getMembre(), 
+                Lang.get("admin") + " " + Lang.get("notification.cancel.registration.for.activity") + " " + inscription.getActivite().getNom(),
+                false,
+                LocalDateTime.now()
+            )
+        );
         return new ServiceResult(true, Lang.get("success.cancel.registration"));
     }
 
@@ -70,7 +81,7 @@ public class InscriptionService {
         return inscriptionDAO.findMembresPlusActifs(n);
     }
 
-    public ServiceResult accepter(int inscriptionId) {
+    public ServiceResult accepter(int inscriptionId, Utilisateur admin) {
         if (inscriptionId < 0) {
             return new ServiceResult(false, Lang.get("error.choose.registration"));
         }
@@ -81,6 +92,24 @@ public class InscriptionService {
         if (!inscriptionDAO.updateStatut(inscriptionId, StatutInscription.ACCEPTEE)){
             return new ServiceResult(false, Lang.get("error.accept.registration"));
         }
+        notificationService.create(
+            new Notification(
+                inscription.getMembre(), 
+                Lang.get("admin") + " " + Lang.get("notification.accept.registration.for.activity") + " " + inscription.getActivite().getNom(),
+                false,
+                LocalDateTime.now()
+            )
+        );
+        if (getNombreInscriptionsAccepteParActivite(inscription.getActivite().getId()) >= inscription.getActivite().getCapaciteMax()) {
+            notificationService.create(
+                new Notification(
+                    admin, 
+                    inscription.getActivite().getNom() + " : " + Lang.get("notification.activity.full"),
+                    false,
+                    LocalDateTime.now()
+                )
+            );
+        }
         return new ServiceResult(true, Lang.get("success.accept.registration"));
     }
 
@@ -88,9 +117,18 @@ public class InscriptionService {
         if (inscriptionId < 0) {
             return new ServiceResult(false, Lang.get("error.choose.registration"));
         }
+        Inscription inscription = inscriptionDAO.findById(inscriptionId);
         if (!inscriptionDAO.updateStatut(inscriptionId, StatutInscription.REFUSEE)){
             return new ServiceResult(false, Lang.get("error.reject.registration"));
         }
+        notificationService.create(
+            new Notification(
+                inscription.getMembre(), 
+                Lang.get("admin") + " " + Lang.get("notification.reject.registration.for.activity") + " " + inscription.getActivite().getNom(),
+                false,
+                LocalDateTime.now()
+            )
+        );
         return new ServiceResult(true, Lang.get("success.reject.registration"));
     }
 

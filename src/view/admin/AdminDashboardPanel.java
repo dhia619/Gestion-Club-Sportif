@@ -8,6 +8,7 @@ import controller.GestionActiviteController;
 import controller.GestionInscriptionController;
 import controller.GestionMembreController;
 import controller.GestionSuiviController;
+import controller.NotificationController;
 import controller.AdminOverviewController;
 import model.Utilisateur;
 import util.Lang;
@@ -27,6 +28,7 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
     private GestionInscriptionController inscriptionController;
     private GestionSuiviController suiviController;
     private AdminOverviewController adminOverviewController;
+    private NotificationController notificationController;
 
     private Utilisateur utilisateur;
 
@@ -72,7 +74,7 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
 
     private JPanel gestionInscriptionsPage() {
         JPanel panel = createBasePage();
-        inscriptionController = new GestionInscriptionController();
+        inscriptionController = new GestionInscriptionController(utilisateur);
         panel.add(inscriptionController.getView());
         return panel;
     }
@@ -86,6 +88,8 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
 
     private JPanel notificationsPage() {
         JPanel panel = createBasePage();
+        notificationController = new NotificationController(utilisateur);
+        panel.add(notificationController.getView());
         return panel;
     }
 
@@ -113,6 +117,7 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
         inscriptionController.getView().refreshUIText();
         suiviController.getView().refreshUIText();
         adminOverviewController.refreshUI();
+        notificationController.getView().refreshUIText();
 
         revalidate();
         repaint();

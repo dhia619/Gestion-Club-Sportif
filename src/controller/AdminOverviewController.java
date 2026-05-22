@@ -5,8 +5,8 @@ import service.InscriptionService;
 import service.UtilisateurService;
 import util.Lang;
 import util.UIConstants;
-import view.admin.OverviewPanel;
-import view.admin.OverviewPanel.BreakdownItem;
+import view.components.OverviewPanel;
+import view.components.OverviewPanel.BreakdownItem;
 
 import java.util.ArrayList;
 import java.util.List;
