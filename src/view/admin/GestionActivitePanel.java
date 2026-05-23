@@ -158,10 +158,16 @@ public class GestionActivitePanel extends ManagementPanel<Activite> {
         deleteItem.setText(Lang.get("button.delete"));
         editItem.setText(Lang.get("button.edit"));
 
+        refreshTooltips();
         refreshTableHeaders();
 
         revalidate();
         repaint();
+    }
+
+    private void refreshTooltips() {
+        dateField.setToolTipText(Lang.get("date.field.tooltip"));
+        timeSpinner.setToolTipText(Lang.get("time.field.tooltip"));
     }
 
     protected void clearFormulaire() {

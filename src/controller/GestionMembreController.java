@@ -3,6 +3,7 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
 import dao.UtilisateurDAO;
@@ -66,33 +67,113 @@ public class GestionMembreController {
 
     private boolean checkFields() {
 
-        if (view.getIdentifiant().isBlank()){
+        String identifiant = view.getIdentifiant().trim();
+        String prenom = view.getNom().trim();
+        String nom = view.getPrenom().trim();
+        String dateNaissance = view.getDateNaissance().trim();
+        String tel = view.getTelephone().trim();
+        String adresse = view.getAdresse().trim();
+        String poids = view.getPoids().trim();
+        String motDePasse = view.getMotDePasse().trim(); 
+        LocalDate birthdate;
+
+        if (identifiant.isEmpty()) {
             PopUp.showError(view, Lang.get("error.enter.username"));
             return false;
         }
-        else if (view.getNom().isBlank()){
+
+        if (!identifiant.matches("[a-zA-ZÀ-ÿ0-9_]{3,20}")) {
+            PopUp.showError(view, Lang.get("error.username"));
+            return false;
+        }
+
+        if (nom.isEmpty()) {
             PopUp.showError(view, Lang.get("error.enter.lastname"));
             return false;
         }
-        else if (view.getPrenom().isBlank()){
+
+        if (!nom.matches("[a-zA-ZÀ-ÿ]{3,30}")) {
+            PopUp.showError(view, Lang.get("error.lastname"));
+            return false;
+        }
+
+        if (prenom.isEmpty()) {
             PopUp.showError(view, Lang.get("error.enter.firstname"));
             return false;
         }
-        else if (view.getDateNaissance().isBlank()){
+
+        if (!prenom.matches("[a-zA-ZÀ-ÿ]{3,30}")) {
+            PopUp.showError(view, Lang.get("error.firstname"));
+            return false;
+        }
+
+        if (dateNaissance.isEmpty()) {
             PopUp.showError(view, Lang.get("error.enter.birthdate"));
             return false;
         }
-        else if (view.getTelephone().isBlank()){
+
+        if (!dateNaissance.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
+            PopUp.showError(view, Lang.get("error.birthdate"));
+            return false;
+        }
+
+        try {
+            birthdate = LocalDate.parse(view.getDateNaissance());
+            if (birthdate.isAfter(LocalDate.now())) {
+                PopUp.showError(view, Lang.get("error.future.birthdate"));
+                return false;
+            }
+        } catch (DateTimeParseException e) {
+            PopUp.showError(view, Lang.get("error.birthdate"));
+            return false;
+        }
+
+        if (tel.isEmpty()) {
             PopUp.showError(view, Lang.get("error.enter.phone"));
             return false;
         }
-        else if (view.getAdresse().isBlank()){
+
+        if (!tel.matches("^\\d{8}$")) {
+            PopUp.showError(view, Lang.get("error.phone"));
+            return false;
+        }
+
+        if (adresse.isEmpty()) {
             PopUp.showError(view, Lang.get("error.enter.address"));
             return false;
         }
-        else if (view.getPoids().isBlank() || Double.parseDouble(view.getPoids()) <= 0){
+
+        if (adresse.length() < 3) {
+            PopUp.showError(view, Lang.get("error.address"));
+            return false;
+        }
+
+        if (poids.isEmpty()) {
             PopUp.showError(view, Lang.get("error.enter.valid.weight"));
             return false;
+        }
+
+        try {
+            double weight = Double.parseDouble(poids);
+
+            if (weight <= 0) {
+                PopUp.showError(view, Lang.get("error.weight"));
+                return false;
+            }
+
+        } catch (NumberFormatException e) {
+            PopUp.showError(view, Lang.get("error.weight"));
+            return false;
+        }
+
+        if (!view.isEditMode()) {
+            if (motDePasse.isBlank()) {
+                PopUp.showError(view, Lang.get("error.enter.password"));
+                return false;
+            } else if (!motDePasse.matches("^[a-zA-Z0-9=#._]{6,}$")) {
+                PopUp.showError(view, Lang.get("error.password"));
+                return false;
+            }
         }
 
         return true;

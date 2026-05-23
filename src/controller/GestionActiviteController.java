@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -20,6 +21,8 @@ public class GestionActiviteController {
     private ActiviteDAO activiteDAO;
     private GestionActivitePanel view;
     private int activiteModifieeId;
+
+    LocalDateTime horaire;
 
     public GestionActiviteController() {
 
@@ -68,37 +71,67 @@ public class GestionActiviteController {
 
     private boolean checkFields() {
 
-        if (view.getNom().isBlank()){
+        if (view.getNom().isBlank()) {
             PopUp.showError(view, Lang.get("error.enter.activity.name"));
             return false;
         }
-        else if (view.getDescription().isBlank()){
-            PopUp.showError(view, Lang.get("error.enter.activity.description"));
+
+        if (view.getNom().trim().length() < 3) {
+            PopUp.showError(view, Lang.get("error.activity.name"));
             return false;
         }
-        else if (view.getCapaciteMax().isBlank()){
+
+        if (view.getCapaciteMax().isBlank()) {
             PopUp.showError(view, Lang.get("error.enter.activity.capacity"));
             return false;
         }
-        else if (String.valueOf(view.getHoraire()).equals("")){
-            PopUp.showError(view, Lang.get("error.enter.activity.schedule"));
+
+        try {
+            int capacity = Integer.parseInt(view.getCapaciteMax().trim());
+
+            if (capacity <= 0) {
+                PopUp.showError(view, Lang.get("error.activity.capacity"));
+                return false;
+            }
+
+        } catch (NumberFormatException e) {
+            PopUp.showError(view, Lang.get("error.activity.capacity"));
+            return false;
+        }
+
+        if (view.getDate().isBlank()) {
+            PopUp.showError(view, Lang.get("error.enter.activity.date"));
+            return false;
+        }
+
+        LocalDate date;
+        try {
+            date = LocalDate.parse(view.getDate());
+        } catch (DateTimeParseException e) {
+            PopUp.showError(view, Lang.get("error.invalid.date.format"));
+            return false;
+        }
+        
+        LocalTime time;
+        try {
+            Date spinnerDate = view.getHoraire();
+            time = spinnerDate
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalTime();
+        } catch (Exception e) {
+            PopUp.showError(view, Lang.get("error.activity.time"));
+            return false;
+        }
+
+        horaire = LocalDateTime.of(date, time);
+        
+        if (horaire.isBefore(LocalDateTime.now())) {
+            PopUp.showError(view, Lang.get("error.activity.past"));
             return false;
         }
 
         return true;
-    }
-
-    private LocalDateTime getHoraire() {
-
-        LocalDate date = LocalDate.parse(view.getDate());
-
-        Date spinnerDate = view.getHoraire();
-
-        LocalTime time = spinnerDate.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
-
-        LocalDateTime fullDateTime = LocalDateTime.of(date, time);
-
-        return fullDateTime;
     }
 
     public void ajouterActivite() {
@@ -106,14 +139,11 @@ public class GestionActiviteController {
         if (checkFields()) {
 
             try {
-
-                LocalDateTime fullDateTime = getHoraire();
-
                 Activite nouvelleActivite = new Activite(
                         view.getNom(),
                         view.getDescription(),
                         Integer.parseInt(view.getCapaciteMax()),
-                        fullDateTime
+                        horaire
                 );
                 boolean success = activiteDAO.create(nouvelleActivite);
                 if (success) {
@@ -161,16 +191,13 @@ public class GestionActiviteController {
         if (checkFields()) {
 
             try {
-
-                LocalDateTime fullDateTime = getHoraire();
-
                 Activite activiteModifiee =
                         new Activite(
                                 activiteModifieeId,
                                 view.getNom(),
                                 view.getDescription(),
                                 Integer.parseInt(view.getCapaciteMax()),
-                                fullDateTime
+                                horaire
                         );
 
                 if (PopUp.showConfirm(view, Lang.get("confirm.save.activity.changes"))) {

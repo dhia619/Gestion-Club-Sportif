@@ -199,7 +199,7 @@ public class GestionMembrePanel extends ManagementPanel<Utilisateur> {
     private void refreshTooltips() {
         identifiantField.setToolTipText(Lang.get("username.field.tooltip"));
         telField.setToolTipText(Lang.get("tel.field.tooltip"));
-        dateNaissanceField.setToolTipText(Lang.get("birthdate.field.tooltip"));
+        dateNaissanceField.setToolTipText(Lang.get("date.field.tooltip"));
         poidsField.setToolTipText(Lang.get("weight.field.tooltip"));
     }
 
@@ -244,5 +244,9 @@ public class GestionMembrePanel extends ManagementPanel<Utilisateur> {
 
     public String getMotDePasse(){
         return new String(passwordField.getPassword());
+    }
+
+    public boolean isEditMode() {
+        return "EDIT".equals(formMode);
     }
 }

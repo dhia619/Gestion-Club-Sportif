@@ -36,7 +36,6 @@ public class GestionInscriptionPanel extends TableWithActionsPanel<InscriptionRo
         return new Object[] {
             "ID",
             Lang.get("activity.name"),
-            Lang.get("activity.description"),
             Lang.get("user.username"),
             Lang.get("activity.date"),
             Lang.get("activity.time"),
@@ -45,7 +44,7 @@ public class GestionInscriptionPanel extends TableWithActionsPanel<InscriptionRo
     }
 
     protected Object[][] getTableData(ArrayList<InscriptionRow> inscriptionRows) {
-        Object[][] data = new Object[inscriptionRows.size()][7];
+        Object[][] data = new Object[inscriptionRows.size()][6];
 
         for (int i = 0; i < inscriptionRows.size(); i++) {
             InscriptionRow a = inscriptionRows.get(i);
@@ -68,7 +67,6 @@ public class GestionInscriptionPanel extends TableWithActionsPanel<InscriptionRo
         return new Object[] {
             inscriptionRow.getInscription().getId(),
             inscriptionRow.getActivite().getNom(),
-            inscriptionRow.getActivite().getDescription(),
             inscriptionRow.getUtilisateur().getLogin(),
             inscriptionRow.getActivite().getHoraire().toLocalDate().toString(),
             inscriptionRow.getActivite().getHoraire().toLocalTime().toString().substring(0, 5),

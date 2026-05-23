@@ -38,11 +38,11 @@ public class ChangePasswordController {
         }
         else if (nouveauMotDePasse.isBlank()){
             PopUp.showError(this.view, Lang.get("error.enter.new.password"));
-        }
-        else if (confirmMotDePasse.isBlank()){
+        } else if (!nouveauMotDePasse.matches("^[a-zA-Z0-9=#._]{6,}$")) {
+            PopUp.showError(view, Lang.get("error.password"));
+        } else if (confirmMotDePasse.isBlank()){
             PopUp.showError(this.view, Lang.get("error.enter.confirm.password"));
-        }
-        else if (!nouveauMotDePasse.equals(confirmMotDePasse)) {
+        } else if (!nouveauMotDePasse.equals(confirmMotDePasse)) {
             PopUp.showError(this.view, Lang.get("error.password.not.match"));
         } else {
             if (PopUp.showConfirm(this.view, Lang.get("confirm.change.password"))) {

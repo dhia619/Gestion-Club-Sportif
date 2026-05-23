@@ -49,10 +49,10 @@ public class InscriptionService {
         if (inscriptionId < 0) {
             return new ServiceResult(false, Lang.get("error.choose.registration"));
         }
+        Inscription inscription = inscriptionDAO.findById(inscriptionId);
         if (!inscriptionDAO.delete(inscriptionId)) {
             return new ServiceResult(false, Lang.get("error.cancel.registration"));
         }
-        Inscription inscription = inscriptionDAO.findById(inscriptionId);
         notificationService.create(
             new Notification(
                 inscription.getMembre(), 

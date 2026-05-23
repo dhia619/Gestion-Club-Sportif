@@ -38,11 +38,9 @@ public class LoginController {
 
         if (identifiant.isBlank()){
             PopUp.showError(this.view, Lang.get("error.empty_username"));
-        }
-        else if (motDePasse.isBlank()){
+        } else if (motDePasse.isBlank()){
             PopUp.showError(this.view, Lang.get("error.empty_password"));
-        }
-        else {
+        } else {
             utilisateur = authService.authenticate(identifiant, motDePasse);
             if (utilisateur != null){
 
