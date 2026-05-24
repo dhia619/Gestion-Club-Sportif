@@ -9,6 +9,7 @@ import controller.ConsulterActiviteController;
 import controller.ConsulterInscriptionController;
 import controller.MembreOverviewController;
 import controller.NotificationController;
+import controller.ProfileController;
 import model.Utilisateur;
 import util.Lang;
 import util.LanguageHandler;
@@ -24,6 +25,7 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
     private ConsulterInscriptionController consulterInscriptionController;
     private MembreOverviewController membreOverviewController;
     private NotificationController notificationController;
+    private ProfileController profileController;
     private Utilisateur utilisateur;
     
     public MembreDashboardPanel(Utilisateur utilisateur){
@@ -66,7 +68,8 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
 
     private JPanel profilePage() {
         JPanel panel = createBasePage();
-
+        profileController = new ProfileController(utilisateur);
+        panel.add(profileController.getView());
         return panel;
     }
 
@@ -99,6 +102,7 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
         consulterInscriptionController.getView().refreshUIText();
         membreOverviewController.refreshUI(utilisateur);
         notificationController.getView().refreshUIText();
+        profileController.getView().refreshUIText();
 
         revalidate();
         repaint();

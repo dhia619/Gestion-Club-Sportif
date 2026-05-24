@@ -4,64 +4,40 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 
-import dao.UtilisateurDAO;
 import model.Utilisateur;
 import service.ServiceResult;
 import service.UtilisateurService;
-import util.HashUtil;
 import util.Lang;
-import view.admin.GestionMembrePanel;
 import view.components.PopUp;
+import view.membre.ProfilePanel;
 
-public class GestionMembreController {
+public class ProfileController {
 
-    private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
+    private ProfilePanel view;
     private UtilisateurService utilisateurService = new UtilisateurService();
-    private GestionMembrePanel view;
 
-    private int membreModifieId;
-
-    public GestionMembreController() {
-
-        ArrayList<Utilisateur> membres = utilisateurDAO.findAll();
-        view = new GestionMembrePanel(membres);
-
-        view.getSubmitFormButton().addActionListener(new ActionListener() {
+    public ProfileController(Utilisateur membre) {
+        this.view = new ProfilePanel();
+        this.view.fillForm(membre);
+        this.view.getSaveButton().addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.isEditMode()) {
-                    modifierMembre(utilisateurService.getUtilisateurById(membreModifieId));
-                } else {
-                    ajouterMembre();
-                }
+            public void actionPerformed(ActionEvent a) {
+                modifierMembre(membre);
             }
         });
 
-        view.getDeleteItem().addActionListener(new ActionListener() {
+        this.view.getRefreshButton().addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
-                supprimerMembres();
+            public void actionPerformed(ActionEvent a) {
+                view.fillForm(utilisateurService.getUtilisateurById(membre.getId()));
             }
         });
-
-        view.getEditItem().addActionListener(new ActionListener() {
+        
+        this.view.getGenerateMemberCardButton().addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
-                int[] ids = view.getSelectedIds();
-
-                if (ids.length == 1) {
-                    membreModifieId = ids[0];
-                    showEditForm(membreModifieId);
-                }
-            }
-        });
-
-        view.getRefreshButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                refreshTable();
+            public void actionPerformed(ActionEvent a) {
+                genererCarteMembre(utilisateurService.getUtilisateurById(membre.getId()));
             }
         });
     }
@@ -167,72 +143,14 @@ public class GestionMembreController {
             return false;
         }
 
-        if (!view.isEditMode()) {
-            if (motDePasse.isBlank()) {
-                PopUp.showError(view, Lang.get("error.enter.password"));
-                return false;
-            } else if (!motDePasse.matches("^[a-zA-Z0-9=#._]{6,}$")) {
-                PopUp.showError(view, Lang.get("error.password"));
-                return false;
-            }
+        if (!motDePasse.isBlank() && !motDePasse.matches("^[a-zA-Z0-9=#._]{6,}$")) {
+            PopUp.showError(view, Lang.get("error.password"));
+            return false;
         }
 
         return true;
     }
 
-    public void ajouterMembre() {
-        if (checkFields()) {
-            Utilisateur nouveauMembre = new Utilisateur(
-                view.getNom(),
-                view.getPrenom(),
-                LocalDate.parse(view.getDateNaissance()),
-                view.getTelephone(),
-                view.getAdresse(),
-                Double.parseDouble(view.getPoids()),
-                view.getIdentifiant(),
-                HashUtil.hash(view.getMotDePasse()),
-                "MEMBRE",
-                true
-            );
-
-            if (utilisateurDAO.findByLogin(view.getIdentifiant()) != null) {
-                PopUp.showError(view, Lang.get("error.username.exists"));
-                return;
-            }
-            boolean success = utilisateurDAO.create(nouveauMembre);
-            if (success) {
-                
-                refreshTable();
-                PopUp.showInfo(view, Lang.get("member.add.success"));
-
-            } else {
-                PopUp.showError(view, Lang.get("member.add.error"));
-            }
-        }
-    }
-
-    public void supprimerMembres(){
-        int [] ids = view.getSelectedIds();
-        if (ids.length == 0){
-            return;
-        }
-        if (PopUp.showConfirm(view, Lang.get("confirm.delete.members"))){
-            for (int id: ids){
-                utilisateurDAO.delete(id);
-            }
-            refreshTable();
-            PopUp.showInfo(view, Lang.get("member.delete.success"));
-        }
-        return;
-    }
-
-    private void showEditForm(int id){
-        Utilisateur membre = utilisateurDAO.findById(id);
-        if (membre != null){
-            view.showEditForm(membre);
-        }
-    }
-    
     public void modifierMembre(Utilisateur membre){
         if (checkFields()) {
             if (PopUp.showConfirm(view, Lang.get("confirm.save.changes"))) {
@@ -256,12 +174,58 @@ public class GestionMembreController {
         }
     }
 
-    private void refreshTable() {
-        ArrayList<Utilisateur> membres = utilisateurDAO.findAll();
-        view.refreshTable(membres);
+    private void genererCarteMembre(Utilisateur membre) {
+        try {
+            javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+            fileChooser.setSelectedFile(new java.io.File("carte_membre_" + membre.getId() + ".pdf"));
+
+            int option = fileChooser.showSaveDialog(view);
+            if (option != javax.swing.JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            java.io.File file = fileChooser.getSelectedFile();
+
+            org.openpdf.text.Document document =
+                    new org.openpdf.text.Document(org.openpdf.text.PageSize.A6);
+
+            org.openpdf.text.pdf.PdfWriter.getInstance(
+                    document,
+                    new java.io.FileOutputStream(file)
+            );
+
+            document.open();
+
+            org.openpdf.text.Font titleFont =
+                    new org.openpdf.text.Font(org.openpdf.text.Font.HELVETICA, 18, org.openpdf.text.Font.BOLD);
+
+            org.openpdf.text.Font normalFont =
+                    new org.openpdf.text.Font(org.openpdf.text.Font.HELVETICA, 12);
+
+            org.openpdf.text.Paragraph title =
+                    new org.openpdf.text.Paragraph("CARTE MEMBRE", titleFont);
+            title.setAlignment(org.openpdf.text.Element.ALIGN_CENTER);
+            document.add(title);
+
+            document.add(new org.openpdf.text.Paragraph(" "));
+            document.add(new org.openpdf.text.Paragraph("ID: " + membre.getId(), normalFont));
+            document.add(new org.openpdf.text.Paragraph("Nom: " + view.getNom(), normalFont));
+            document.add(new org.openpdf.text.Paragraph("Prénom: " + view.getPrenom(), normalFont));
+            document.add(new org.openpdf.text.Paragraph("Login: " + view.getIdentifiant(), normalFont));
+            document.add(new org.openpdf.text.Paragraph("Téléphone: " + view.getTelephone(), normalFont));
+            document.add(new org.openpdf.text.Paragraph("Date naissance: " + view.getDateNaissance(), normalFont));
+            document.add(new org.openpdf.text.Paragraph("Adresse: " + view.getAdresse(), normalFont));
+
+            document.close();
+
+            PopUp.showInfo(view, "Carte membre générée avec succès.");
+
+        } catch (Exception ex) {
+            PopUp.showError(view, "Erreur génération PDF: " + ex.getMessage());
+        }
     }
 
-    public GestionMembrePanel getView() {
-        return view;
+    public ProfilePanel getView() {
+        return this.view;
     }
 }
