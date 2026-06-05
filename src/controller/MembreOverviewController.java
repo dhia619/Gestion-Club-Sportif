@@ -7,7 +7,6 @@ import util.UIConstants;
 import view.components.OverviewPanel;
 import view.components.OverviewPanel.BreakdownItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import model.Utilisateur;

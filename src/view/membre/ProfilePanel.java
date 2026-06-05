@@ -58,7 +58,7 @@ public class ProfilePanel extends JPanel{
         actionsPanel.setAlignmentX(LEFT_ALIGNMENT);
         
         saveButton = new CustomButton(Lang.get("button.save"), UIConstants.emeraldGreen);
-        generateMemberCardButton = new CustomButton(Lang.get("member.generate.card"), UIConstants.sunflowerYellow);
+        generateMemberCardButton = new CustomButton(Lang.get("membership.card.generate"), UIConstants.sunflowerYellow);
         refreshButton = new CustomButton(Lang.get("button.refresh"), UIConstants.belizeBlue);
         actionsPanel.addComponent(generateMemberCardButton);
         actionsPanel.addComponent(saveButton);
@@ -149,7 +149,7 @@ public class ProfilePanel extends JPanel{
         titleLabel.setText(Lang.get("profile"));
 
         saveButton.setText(Lang.get("button.save"));
-        generateMemberCardButton.setText(Lang.get("member.generate.card"));
+        generateMemberCardButton.setText(Lang.get("membership.card.generate"));
 
         identifiantLabel.setText(Lang.get("user.username"));
         nomLabel.setText(Lang.get("user.lastname"));

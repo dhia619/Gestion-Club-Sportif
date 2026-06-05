@@ -103,6 +103,7 @@ public class MembreDashboardPanel extends DashboardLayoutPanel{
         membreOverviewController.refreshUI(utilisateur);
         notificationController.getView().refreshUIText();
         profileController.getView().refreshUIText();
+        membreOverviewController.getView().refreshUIText();
 
         revalidate();
         repaint();

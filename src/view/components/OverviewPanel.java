@@ -10,6 +10,7 @@ import java.util.List;
 public class OverviewPanel extends JPanel {
 
     private JPanel cardsPanel;
+    JLabel title;
 
     public record BreakdownItem(String label, String value, Color dotColor) {}
 
@@ -18,7 +19,7 @@ public class OverviewPanel extends JPanel {
         setBackground(UIConstants.secondaryBackgroundColor);
         setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
-        JLabel title = new CustomLabel(
+        title = new CustomLabel(
             Lang.get("statistics"),
             UIConstants.belizeBlue,
             UIConstants.tableFont,
@@ -123,6 +124,10 @@ public class OverviewPanel extends JPanel {
         row.add(lblValue, BorderLayout.EAST);
         
         return row;
+    }
+
+    public void refreshUIText() {
+        title.setText(Lang.get("statistics"));
     }
 
     public JPanel getCardsPanel() { 

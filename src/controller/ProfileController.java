@@ -1,8 +1,10 @@
 package controller;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
 import model.Utilisateur;
@@ -11,6 +13,24 @@ import service.UtilisateurService;
 import util.Lang;
 import view.components.PopUp;
 import view.membre.ProfilePanel;
+
+import java.io.File;
+import java.io.FileOutputStream;
+
+import javax.swing.JFileChooser;
+
+import org.openpdf.text.Chunk;
+import org.openpdf.text.Document;
+import org.openpdf.text.Element;
+import org.openpdf.text.Font;
+import org.openpdf.text.PageSize;
+import org.openpdf.text.Paragraph;
+import org.openpdf.text.Phrase;
+import org.openpdf.text.Rectangle;
+import org.openpdf.text.pdf.PdfPCell;
+import org.openpdf.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfWriter;
+import org.openpdf.text.pdf.BaseFont;
 
 public class ProfileController {
 
@@ -176,53 +196,148 @@ public class ProfileController {
 
     private void genererCarteMembre(Utilisateur membre) {
         try {
-            javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
-            fileChooser.setSelectedFile(new java.io.File("carte_membre_" + membre.getId() + ".pdf"));
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setSelectedFile(new File("carte_membre_" + membre.getId() + ".pdf"));
 
             int option = fileChooser.showSaveDialog(view);
-            if (option != javax.swing.JFileChooser.APPROVE_OPTION) {
-                return;
-            }
+            if (option != JFileChooser.APPROVE_OPTION) return;
 
-            java.io.File file = fileChooser.getSelectedFile();
+            File file = fileChooser.getSelectedFile();
 
-            org.openpdf.text.Document document =
-                    new org.openpdf.text.Document(org.openpdf.text.PageSize.A6);
-
-            org.openpdf.text.pdf.PdfWriter.getInstance(
-                    document,
-                    new java.io.FileOutputStream(file)
-            );
+            Document document = new Document(PageSize.A6, 18, 18, 18, 18);
+            PdfWriter.getInstance(document, new FileOutputStream(file));
 
             document.open();
 
-            org.openpdf.text.Font titleFont =
-                    new org.openpdf.text.Font(org.openpdf.text.Font.HELVETICA, 18, org.openpdf.text.Font.BOLD);
+            Color primaryColor = new Color(41, 128, 185);
+            Color lightGray = new Color(245, 245, 245);
+            Color darkGray = new Color(60, 60, 60);
 
-            org.openpdf.text.Font normalFont =
-                    new org.openpdf.text.Font(org.openpdf.text.Font.HELVETICA, 12);
+            BaseFont baseFont = BaseFont.createFont(
+                "resources/fonts/NotoSansArabic-VariableFont_wdth,wght.ttf",
+                BaseFont.IDENTITY_H,
+                BaseFont.EMBEDDED
+            );
 
-            org.openpdf.text.Paragraph title =
-                    new org.openpdf.text.Paragraph("CARTE MEMBRE", titleFont);
-            title.setAlignment(org.openpdf.text.Element.ALIGN_CENTER);
-            document.add(title);
+            Font titleFont = new Font(baseFont, 18, Font.BOLD, Color.WHITE);
+            Font subtitleFont = new Font(baseFont, 10, Font.NORMAL, Color.WHITE);
+            Font labelFont = new Font(baseFont, 9, Font.BOLD, darkGray);
+            Font valueFont = new Font(baseFont, 9, Font.NORMAL, darkGray);
+            Font footerFont = new Font(baseFont, 8, Font.ITALIC, Color.GRAY);
 
-            document.add(new org.openpdf.text.Paragraph(" "));
-            document.add(new org.openpdf.text.Paragraph("ID: " + membre.getId(), normalFont));
-            document.add(new org.openpdf.text.Paragraph("Nom: " + view.getNom(), normalFont));
-            document.add(new org.openpdf.text.Paragraph("Prénom: " + view.getPrenom(), normalFont));
-            document.add(new org.openpdf.text.Paragraph("Login: " + view.getIdentifiant(), normalFont));
-            document.add(new org.openpdf.text.Paragraph("Téléphone: " + view.getTelephone(), normalFont));
-            document.add(new org.openpdf.text.Paragraph("Date naissance: " + view.getDateNaissance(), normalFont));
-            document.add(new org.openpdf.text.Paragraph("Adresse: " + view.getAdresse(), normalFont));
+            PdfPTable card = new PdfPTable(1);
+            card.setWidthPercentage(100);
+            if (isArabic()) {
+                card.setRunDirection(PdfWriter.RUN_DIRECTION_RTL);
+            }
 
+            PdfPCell header = new PdfPCell();
+            header.setBackgroundColor(primaryColor);
+            header.setPadding(12);
+            header.setBorder(Rectangle.NO_BORDER);
+            if (isArabic()) {
+                header.setRunDirection(PdfWriter.RUN_DIRECTION_RTL);
+            }
+
+            Paragraph title = new Paragraph(Lang.get("membership.card.title"), titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+
+            Paragraph subtitle = new Paragraph(Lang.get("membership.card.subtitle"), subtitleFont);
+            subtitle.setAlignment(Element.ALIGN_CENTER);
+
+            header.addElement(title);
+            header.addElement(subtitle);
+            card.addCell(header);
+
+            PdfPCell body = new PdfPCell();
+            body.setPadding(12);
+            body.setBackgroundColor(lightGray);
+            body.setBorder(Rectangle.NO_BORDER);
+            if (isArabic()) {
+                body.setRunDirection(PdfWriter.RUN_DIRECTION_RTL);
+            }
+
+            Paragraph id = new Paragraph(
+                Lang.get("membership.card.id") + " " + membre.getId(),
+                labelFont
+            );
+            id.setAlignment(Element.ALIGN_CENTER);
+            body.addElement(id);
+            body.addElement(Chunk.NEWLINE);
+
+            PdfPTable infos = new PdfPTable(2);
+            infos.setWidthPercentage(100);
+            infos.setWidths(new float[]{35, 65});
+
+            if (isArabic()) {
+                infos.setRunDirection(PdfWriter.RUN_DIRECTION_RTL);
+            }
+
+            addInfoRow(infos, Lang.get("user.lastname"), view.getNom(), labelFont, valueFont);
+            addInfoRow(infos, Lang.get("user.firstname"), view.getPrenom(), labelFont, valueFont);
+            addInfoRow(infos, Lang.get("user.username"), view.getIdentifiant(), labelFont, valueFont);
+            addInfoRow(infos, Lang.get("user.tel"), view.getTelephone(), labelFont, valueFont);
+            addInfoRow(infos, Lang.get("user.birthdate"), view.getDateNaissance(), labelFont, valueFont);
+            addInfoRow(infos, Lang.get("user.address"), view.getAdresse(), labelFont, valueFont);
+
+            body.addElement(infos);
+            card.addCell(body);
+
+            String today = String.valueOf(LocalDateTime.now());
+            PdfPCell footer = new PdfPCell(
+                new Phrase(Lang.get("generated_at") + " " + today.split("T")[0] + " " + today.split("T")[1].substring(0, 5), footerFont)
+            );
+            footer.setHorizontalAlignment(Element.ALIGN_CENTER);
+            footer.setPadding(8);
+            footer.setBorder(Rectangle.NO_BORDER);
+            if (isArabic()) {
+                footer.setRunDirection(PdfWriter.RUN_DIRECTION_RTL);
+            }
+
+            card.addCell(footer);
+
+            document.add(card);
             document.close();
 
-            PopUp.showInfo(view, "Carte membre générée avec succès.");
+            PopUp.showInfo(view, Lang.get("membership.card.generate.success"));
 
         } catch (Exception ex) {
-            PopUp.showError(view, "Erreur génération PDF: " + ex.getMessage());
+            PopUp.showError(view, Lang.get("pdf.generate.error") + ex.getMessage());
         }
+    }
+
+    private void addInfoRow(
+        PdfPTable table,
+        String label,
+        String value,
+        Font labelFont,
+        Font valueFont
+    ) {
+        PdfPCell labelCell = new PdfPCell(new Phrase(label + " :", labelFont));
+        labelCell.setBorder(Rectangle.NO_BORDER);
+        labelCell.setPadding(4);
+
+        PdfPCell valueCell = new PdfPCell(new Phrase(value, valueFont));
+        valueCell.setBorder(Rectangle.NO_BORDER);
+        valueCell.setPadding(4);
+
+        if (isArabic()) {
+            labelCell.setRunDirection(PdfWriter.RUN_DIRECTION_RTL);
+            valueCell.setRunDirection(PdfWriter.RUN_DIRECTION_RTL);
+
+            labelCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            valueCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        } else {
+            labelCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            valueCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+        }
+
+        table.addCell(labelCell);
+        table.addCell(valueCell);
+    }
+
+    private boolean isArabic() {
+        return Lang.getLocale().getLanguage().equals("ar");
     }
 
     public ProfilePanel getView() {
