@@ -117,6 +117,7 @@ public class AdminDashboardPanel extends DashboardLayoutPanel {
         inscriptionController.getView().refreshUIText();
         suiviController.getView().refreshUIText();
         adminOverviewController.refreshUI();
+        adminOverviewController.getView().refreshUIText();
         notificationController.getView().refreshUIText();
 
         revalidate();

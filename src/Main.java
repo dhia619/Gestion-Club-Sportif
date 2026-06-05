@@ -8,6 +8,6 @@ public class Main {
     public static void main(String[] args){
         DatabaseInitializer.init();
         LanguageHandler.init();
-        new MainFrame(800, 500 , Lang.get("app.title"));
+        new MainFrame(1000, 750 , Lang.get("app.title"));
     }
 }

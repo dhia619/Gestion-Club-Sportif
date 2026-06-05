@@ -89,6 +89,9 @@ public class InscriptionService {
         if (getNombreInscriptionsAccepteParActivite(inscription.getActivite().getId()) >= inscription.getActivite().getCapaciteMax()) {
             return new ServiceResult(false, Lang.get("error.activity.reached.max.capacity"));
         }
+        if (inscription.getStatut() == StatutInscription.ACCEPTEE) {
+            return new ServiceResult(false, Lang.get("error.registration.already.accepted"));
+        }
         if (!inscriptionDAO.updateStatut(inscriptionId, StatutInscription.ACCEPTEE)){
             return new ServiceResult(false, Lang.get("error.accept.registration"));
         }
@@ -118,6 +121,9 @@ public class InscriptionService {
             return new ServiceResult(false, Lang.get("error.choose.registration"));
         }
         Inscription inscription = inscriptionDAO.findById(inscriptionId);
+        if (inscription.getStatut() == StatutInscription.REFUSEE) {
+            return new ServiceResult(false, Lang.get("error.registration.already.rejected"));
+        }
         if (!inscriptionDAO.updateStatut(inscriptionId, StatutInscription.REFUSEE)){
             return new ServiceResult(false, Lang.get("error.reject.registration"));
         }
