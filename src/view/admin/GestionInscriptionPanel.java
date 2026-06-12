@@ -64,12 +64,22 @@ public class GestionInscriptionPanel extends TableWithActionsPanel<InscriptionRo
     }
 
     private Object[] toTableRow(InscriptionRow inscriptionRow) {
+        String memberName = (inscriptionRow.getUtilisateur() != null) ? inscriptionRow.getUtilisateur().getLogin() : "N/A";
+        String activityName = (inscriptionRow.getActivite() != null) ? inscriptionRow.getActivite().getNom() : "N/A";
+        String activityDate = "N/A";
+        String activityTime = "N/A";
+        
+        if (inscriptionRow.getActivite() != null && inscriptionRow.getActivite().getHoraire() != null) {
+            activityDate = inscriptionRow.getActivite().getHoraire().toLocalDate().toString();
+            activityTime = inscriptionRow.getActivite().getHoraire().toLocalTime().toString().substring(0, 5);
+        }
+        
         return new Object[] {
             inscriptionRow.getInscription().getId(),
-            inscriptionRow.getActivite().getNom(),
-            inscriptionRow.getUtilisateur().getLogin(),
-            inscriptionRow.getActivite().getHoraire().toLocalDate().toString(),
-            inscriptionRow.getActivite().getHoraire().toLocalTime().toString().substring(0, 5),
+            activityName,
+            memberName,
+            activityDate,
+            activityTime,
             Lang.get(inscriptionRow.getInscription().getStatut().toString())
         };
     }

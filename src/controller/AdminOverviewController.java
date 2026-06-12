@@ -89,9 +89,11 @@ public class AdminOverviewController {
         ArrayList<BreakdownItem> activitesPopulairesItems = new ArrayList<BreakdownItem>();
 
         for (ActiviteRow a : activitesPopulaires) {
-            activitesPopulairesItems.add(
-                new BreakdownItem(a.getActivite().getNom(), String.valueOf(a.getPlacesRestantes()), UIConstants.belizeBlue)
-            );
+            if (a.getActivite() != null) {
+                activitesPopulairesItems.add(
+                    new BreakdownItem(a.getActivite().getNom(), String.valueOf(a.getPlacesRestantes()), UIConstants.belizeBlue)
+                );
+            }
         }
 
         view.getCardsPanel().add(view.createCompoundCard(

@@ -393,9 +393,12 @@ public class InscriptionDAO {
             if (n>=0) statement.setInt(1, n);
             ResultSet result = statement.executeQuery();
             while (result.next()) {
-                activitesPopulaires.add(
-                    new ActiviteRow(activiteDAO.findById(result.getInt("activite_id")), result.getInt("total"))
-                );
+                Activite activite = activiteDAO.findById(result.getInt("activite_id"));
+                if (activite != null) {
+                    activitesPopulaires.add(
+                        new ActiviteRow(activite, result.getInt("total"))
+                    );
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

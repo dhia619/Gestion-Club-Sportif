@@ -68,7 +68,9 @@ public class InscriptionService {
         ArrayList<InscriptionRow> inscriptionRows = new ArrayList<InscriptionRow>();
         ArrayList<Inscription> inscriptions = inscriptionDAO.findAll();
         for (Inscription inscription : inscriptions) {
-            inscriptionRows.add(new InscriptionRow(inscription.getMembre(), inscription, inscription.getActivite()));
+            if (inscription.getMembre() != null && inscription.getActivite() != null) {
+                inscriptionRows.add(new InscriptionRow(inscription.getMembre(), inscription, inscription.getActivite()));
+            }
         }
         return inscriptionRows;
     }
